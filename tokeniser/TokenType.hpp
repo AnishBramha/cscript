@@ -1,0 +1,25 @@
+enum TokenType {
+
+  // Single-character tokens.
+  LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
+  COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
+
+  // One/two character tokens.
+  BANG, NOT_EQUAL,
+  EQUAL, ASSIGN,
+  GREATER, GREATER_EQUAL,
+  LESS, LESS_EQUAL,
+
+  // Literals.
+  IDENTIFIER, STRING, NUMBER,
+
+  // Keywords.
+  AND, CLASS, ELSE, FALSE, DEF, FOR, IF, NIL, OR,
+  IOPUTF, JUMP, SUPER, THIS, TRUE, VAR, WHILE, DO,
+
+  END_OF_FILE
+};
+
+
+
+
