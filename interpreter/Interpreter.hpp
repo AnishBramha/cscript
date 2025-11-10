@@ -11,18 +11,17 @@ class Interpreter : public Visitor {
 
     private:
 
-        object evaluate(Expr& expr); 
-        bool isTruthy(object);
-        void checkNumberOperand(const Token& operatr, const object operand);
-        void checkNumberOperands(const Token& operatr, const object left, const object right);
-        std::string objectToString(object);
+        super::object evaluate(Expr& expr); 
+        bool isTruthy(super::object);
+        void checkNumberOperand(const Token& operatr, const super::object operand);
+        void checkNumberOperands(const Token& operatr, const super::object left, const super::object right);
 
     public:
 
-        object visitGroupingExpr(const Grouping& expr) override;
-        object visitUnaryExpr(const Unary& expr) override;
-        object visitBinaryExpr(const Binary& expr) override;
-        object visitLiteralExpr(const Literal& expr) override;
+        super::object visitGroupingExpr(const Grouping& expr) override;
+        super::object visitUnaryExpr(const Unary& expr) override;
+        super::object visitBinaryExpr(const Binary& expr) override;
+        super::object visitLiteralExpr(const Literal& expr) override;
 
         void interpret(Expr& expr);
 

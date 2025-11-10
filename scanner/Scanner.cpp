@@ -20,7 +20,7 @@ std::vector<Token*> Scanner::scanTokens(void) {
     }
 
     std::string lexeme = "";
-    object literal = nullptr;
+    super::object literal = nullptr;
 
     this->tokens.emplace_back(new Token(TokenType::END_OF_FILE, lexeme, literal, this->line));
 
@@ -60,7 +60,7 @@ void Scanner::number(void) {
             this->advance();
     }
 
-    object number = std::stod(this->source.substr(this->start, this->current - this->start));
+    super::object number = std::stod(this->source.substr(this->start, this->current - this->start));
 
     this->addToken(TokenType::NUMBER, number);
 
@@ -104,14 +104,13 @@ void Scanner::scanToken(void) {
         case '.': this->addToken(TokenType::DOT);         break;
         case '-': this->addToken(TokenType::MINUS);       break;
         case '+': this->addToken(TokenType::PLUS);        break;
-        case '*': this->addToken(TokenType::STAR);        break;
-        case '%': this->addToken(TokenType::MOD);         break;
-        case '^': this->addToken(TokenType::POWER);       break;
         case ';': this->addToken(TokenType::SEMICOLON);   break;
+        case '*': this->addToken(TokenType::STAR);        break;
         case '!': this->addToken(TokenType::BANG);        break;
         case '=': this->addToken(TokenType::EQUAL);       break;
+        case '^': this->addToken(TokenType::POWER);       break;
+        case '%': this->addToken(TokenType::MOD);         break;
 
-        
         case ':':
 
             if (this->match('='))
@@ -197,13 +196,13 @@ char Scanner::advance(void) {
 
 void Scanner::addToken(TokenType type) {
 
-    object literal = nullptr;
+    super::object literal = nullptr;
 
     this->addToken(type, literal);
 }
 
 
-void Scanner::addToken(TokenType type, object& literal) {
+void Scanner::addToken(TokenType type, super::object& literal) {
 
     std::string text = this->source.substr(this->start, this->current - this->start);
 
@@ -284,7 +283,7 @@ void Scanner::str(void) {
 
     this->advance();
 
-    object literal = this->source.substr(this->start + 1, this->current - this->start - 2);
+    super::object literal = this->source.substr(this->start + 1, this->current - this->start - 2);
 
     this->addToken(TokenType::STRING, literal);
 

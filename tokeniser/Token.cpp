@@ -1,11 +1,11 @@
 #include "./Token.hpp"
 #include <cstddef>
 #include <string>
-#include <type_traits>
+#include <format>
 #include "../superclass/super.hpp"
 
 
-Token::Token(TokenType type, std::string& lexeme, object& literal, int line)
+Token::Token(TokenType type, std::string& lexeme, super::object& literal, int line)
     : type(type),
       lexeme(lexeme),
       literal(literal),
@@ -27,6 +27,8 @@ std::string Token::tokenTypeToString(const TokenType type) const {
         case TokenType::SEMICOLON:     return "SEMICOLON";
         case TokenType::SLASH:         return "SLASH";
         case TokenType::STAR:          return "STAR";
+        case TokenType::POWER:         return "POWER";
+        case TokenType::MOD:           return "MOD";
 
         // One or two character tokens
         case TokenType::BANG:          return "BANG";
@@ -37,8 +39,6 @@ std::string Token::tokenTypeToString(const TokenType type) const {
         case TokenType::GREATER_EQUAL: return "GREATER_EQUAL";
         case TokenType::LESS:          return "LESS";
         case TokenType::LESS_EQUAL:    return "LESS_EQUAL";
-        case TokenType::MOD:           return "MOD";
-        case TokenType::POWER:         return "POWER";
 
         // Literals
         case TokenType::IDENTIFIER:    return "IDENTIFIER";
@@ -72,35 +72,21 @@ std::string Token::tokenTypeToString(const TokenType type) const {
 }
 
 
-std::string Token::objectToString(const object& obj) const {
+std::string Token::objectToString(const super::object& obj) const {
 
-    std::string token;
+    if (obj.is_null())
+        return "nil";
 
-    std::visit(
+    if (obj.is_bool())
+        return obj.as_bool() ? "true" : "false";
 
-        [&token](const auto& val) {
+    if (obj.is_double())
+        return std::format("{}", obj.as_double());
 
-            using T = std::decay_t<decltype(val)>;
+    if (obj.is_string())
+        return obj.as_string();
 
-            if constexpr (std::is_same_v<T, bool>)
-                token = "bool";
-
-            else if constexpr (std::is_same_v<T, double>)
-                token = "double";
-
-            else if constexpr (std::is_same_v<T, std::string>)
-                token = "string";
-
-            else if constexpr (std::is_same_v<T, std::nullptr_t>)
-                token = "nil";
-
-            else
-                token = "INVALID TOKEN";
-            
-        }, obj
-    );
-
-    return token;
+    return "UNEXPECTED OBJECT TYPE";
 }
 
 

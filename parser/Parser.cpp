@@ -135,8 +135,27 @@ Expr* Parser::unsafe_factor(void) { // free memory later
     while (this->match(operators)) {
 
         Token operatr = this->previous();
-       
-        std::unique_ptr<Expr> right(this->unsafe_unary());
+        
+        std::unique_ptr<Expr> right(this->unsafe_power());
+
+        expr = std::make_unique<Binary>(std::move(expr), operatr, std::move(right));
+    }
+
+    return expr.release();
+}
+
+
+Expr* Parser::unsafe_power(void) { // free memory later
+
+    std::unique_ptr<Expr> expr(this->unsafe_unary());
+
+    std::vector<TokenType> operators = {TokenType::POWER};
+
+    while (this->match(operators)) {
+
+        Token operatr = this->previous();
+
+        std::unique_ptr<Expr> right(this->unsafe_power());
 
         expr = std::make_unique<Binary>(std::move(expr), operatr, std::move(right));
     }
@@ -162,30 +181,11 @@ Expr* Parser::unsafe_unary(void) { // free memory later
 }
 
 
-Expr* Parser::unsafe_power(void) { // free memory later
-
-    std::unique_ptr<Expr> expr(this->unsafe_unary());
-
-    std::vector<TokenType> operators = {TokenType::POWER};
-
-    while (this->match(operators)) {
-
-        Token operatr = this->previous();
-
-        std::unique_ptr<Expr> right(this->unsafe_unary());
-
-        expr = std::make_unique<Binary>(std::move(expr), operatr, std::move(right));
-    }
-
-    return expr.release();
-}
-
-
 Expr* Parser::unsafe_primary(void) { // free memory later
 
     std::vector<TokenType> t1 = {TokenType::FALSE}, t2 = {TokenType::TRUE}, t3 = {TokenType::NIL}, t4 = {TokenType::NUMBER, TokenType::STRING}, t5 = {TokenType::LEFT_PAREN};
 
-    object literal;
+    super::object literal;
 
     if (this->match(t1)) {
 

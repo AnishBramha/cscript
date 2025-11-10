@@ -15,14 +15,7 @@
 
 std::string AstPrinter::print(Expr& expr) {
 
-    object literal = expr.accept(*this);
-
-    if (auto* str_ptr = std::get_if<std::string>(&literal))
-        return *str_ptr;
-
-    std::cerr << "AstPrinter::print: " << ERR_MESSAGE << std::endl;
-
-    std::exit(EX_DATAERR);
+    return expr.accept(*this).as_string();
 }
 
 
@@ -32,23 +25,8 @@ std::string AstPrinter::parenthesise(const std::string& name, const std::vector<
 
     builder << "(" << name;
 
-    for (auto* expr : exprs) {
-
-        object literal = expr->accept(*this);
-
-        std::string* str_ptr = nullptr;
-
-        str_ptr = std::get_if<std::string>(&literal);
-
-        if (!str_ptr) {
-
-            std::cerr << "AstPrinter::parenthesise: " << ERR_MESSAGE << std::endl;
-
-            std::exit(EX_DATAERR);
-        }
-
-        builder << " " << *str_ptr;
-    }
+    for (auto* expr : exprs)
+        builder << " " << expr->accept(*this).as_string();
 
     builder << ")";
 
@@ -56,51 +34,25 @@ std::string AstPrinter::parenthesise(const std::string& name, const std::vector<
 }
 
 
-object AstPrinter::visitBinaryExpr(const Binary& expr) {
+super::object AstPrinter::visitBinaryExpr(const Binary& expr) {
 
     return this->parenthesise(expr.oprtor.lexeme, {expr.left.get(), expr.right.get()});
 }
 
 
-object AstPrinter::visitGroupingExpr(const Grouping& expr) {
+super::object AstPrinter::visitGroupingExpr(const Grouping& expr) {
 
     return this->parenthesise("group", {expr.expr.get()});
 }
 
 
-object AstPrinter::visitLiteralExpr(const Literal& expr) {
+super::object AstPrinter::visitLiteralExpr(const Literal& expr) {
 
-    return std::visit(
-
-        [](const auto& value) -> std::string {
-
-            using T = std::decay_t<decltype(value)>;
-
-            if constexpr (std::is_same_v<T, std::nullptr_t>)
-                return "nil";
-
-            else if constexpr (std::is_same_v<T, std::string>)
-                return value;
-
-            else if constexpr (std::is_same_v<T, double>)
-                return std::to_string(value);
-
-            else if constexpr (std::is_same_v<T, bool>)
-                return value ? "true" : "false";
-
-            else {
-
-                std::cerr << "AstPrinter::visitLiteralExpr: " << ERR_MESSAGE << std::endl;
-
-                std::exit(EX_DATAERR);
-            }
-
-        }, expr.value
-    );
+    return expr.value.as_string();
 }
 
 
-object AstPrinter::visitUnaryExpr(const Unary& expr) {
+super::object AstPrinter::visitUnaryExpr(const Unary& expr) {
 
     return this->parenthesise(expr.oprtor.lexeme, {expr.right.get()});
 }

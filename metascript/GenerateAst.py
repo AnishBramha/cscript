@@ -40,7 +40,7 @@ def declareType(writer, baseName: str, className: str, fieldList: str) -> None:
 
     writer.write(');\n\n')
 
-    writer.write('\t\tobject accept(Visitor& visitor) override;\n\n')
+    writer.write('\t\tsuper::object accept(Visitor& visitor) override;\n\n')
 
     writer.write('};\n\n\n')
 
@@ -89,7 +89,7 @@ def defineType(writer, baseName: str, className: str, fieldList: str) -> None:
 
     writer.write(' {}\n\n')
 
-    writer.write(f'object {className}::accept(Visitor& visitor) {{\n\n')
+    writer.write(f'super::object {className}::accept(Visitor& visitor) {{\n\n')
 
     writer.write(f'\treturn visitor.visit{className}{baseName}(*this);\n')
 
@@ -122,7 +122,7 @@ def defineAst(outputDir: str, baseName: str, types: list[str]) -> None:
         writer.write('\tpublic:\n\n')
 
 
-        writer.write('\t\tvirtual object accept(Visitor& visitor) = 0;\n\n')
+        writer.write('\t\tvirtual super::object accept(Visitor& visitor) = 0;\n\n')
 
         writer.write('\t\tvirtual ~Expr() = default;\n');
 
@@ -173,7 +173,7 @@ def declareVisitor(writer, baseName: str, types: list[str]):
 
         typeName = _type.split(':')[0].strip()
 
-        writer.write(f'\t\tvirtual object visit{typeName}{baseName}(')
+        writer.write(f'\t\tvirtual super::object visit{typeName}{baseName}(')
 
         writer.write(f'const {typeName}& {baseName.lower()}) = 0;\n')
 
@@ -184,11 +184,11 @@ def declareVisitor(writer, baseName: str, types: list[str]):
 
 if __name__ == '__main__':
 
-    defineAst('../syntax', 'Expr', [
+    defineAst('.', 'Expr', [
 
         'Binary   : Expr left, Token oprtor, Expr right',
         'Grouping : Expr expr',
-        'Literal  : object value',
+        'Literal  : super::object value',
         'Unary    : Token oprtor, Expr right'
     ])
 

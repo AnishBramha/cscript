@@ -43,7 +43,7 @@ class Scanner {
         bool isAtEnd(void);
         char advance(void);
         void addToken(TokenType type);
-        void addToken(TokenType type, object& literal);
+        void addToken(TokenType type, super::object& literal);
         bool match(char expected);
         char peek(void);
         char peekNext(void);

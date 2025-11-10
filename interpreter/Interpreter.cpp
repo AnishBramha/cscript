@@ -10,26 +10,24 @@
 #include <stdexcept>
 #include <string>
 #include <sysexits.h>
-#include <type_traits>
-#include <variant>
 #include <format>
 
 
-object Interpreter::visitGroupingExpr(const Grouping& expr) {
+super::object Interpreter::visitGroupingExpr(const Grouping& expr) {
 
     return this->evaluate(*expr.expr.get());
 }
 
 
-object Interpreter::evaluate(Expr& expr) {
+super::object Interpreter::evaluate(Expr& expr) {
 
     return expr.accept(*this);
 }
 
 
-object Interpreter::visitUnaryExpr(const Unary& expr) {
+super::object Interpreter::visitUnaryExpr(const Unary& expr) {
 
-    object right = this->evaluate(*expr.right.get());
+    super::object right = this->evaluate(*expr.right.get());
 
     switch (expr.oprtor.type) {
 
@@ -37,7 +35,7 @@ object Interpreter::visitUnaryExpr(const Unary& expr) {
 
             this->checkNumberOperand(expr.oprtor, right);
 
-            return -(*std::get_if<double>(&right));
+            return -right.as_double();
 
             break;
 
@@ -51,21 +49,14 @@ object Interpreter::visitUnaryExpr(const Unary& expr) {
             break;
     }
 
-    return nullptr;
+    return super::object();
 }
 
 
-object Interpreter::visitBinaryExpr(const Binary& expr) {
+super::object Interpreter::visitBinaryExpr(const Binary& expr) {
 
-    object left = this->evaluate(*expr.left.get());
-    object right = this->evaluate(*expr.right.get());
-
-    auto* double_left_ptr = std::get_if<double>(&left);
-    auto* double_right_ptr = std::get_if<double>(&right);
-
-    auto* str_left_ptr = std::get_if<std::string>(&left);
-    auto* str_right_ptr = std::get_if<std::string>(&right);
-
+    super::object left = this->evaluate(*expr.left.get());
+    super::object right = this->evaluate(*expr.right.get());
 
     switch (expr.oprtor.type) {
 
@@ -73,7 +64,7 @@ object Interpreter::visitBinaryExpr(const Binary& expr) {
 
             this->checkNumberOperands(expr.oprtor, left, right);
 
-            return *double_left_ptr - *double_right_ptr;
+            return left.as_double() - right.as_double();
 
             break;
 
@@ -82,10 +73,10 @@ object Interpreter::visitBinaryExpr(const Binary& expr) {
 
             this->checkNumberOperands(expr.oprtor, left, right);
 
-            if (!(*double_right_ptr))
+            if (!static_cast<int>(right.as_double()))
                 throw Interpreter::RuntimeError(expr.oprtor, "Interpreter: DIVISION BY ZERO");
 
-            return *double_left_ptr / *double_right_ptr;
+            return left.as_double() / right.as_double();
 
             break;
 
@@ -94,51 +85,56 @@ object Interpreter::visitBinaryExpr(const Binary& expr) {
 
             this->checkNumberOperands(expr.oprtor, left, right);
 
-            return *double_left_ptr * *double_right_ptr;
+            return left.as_double() * right.as_double();
 
             break;
 
 
         case TokenType::PLUS:
 
-            if (double_left_ptr && double_right_ptr)
-                return *double_left_ptr + *double_right_ptr;
+            if (left.is_double() && right.is_double())
+                return left.as_double() + right.as_double();
 
-            if (str_left_ptr && str_right_ptr)
-                return *str_left_ptr + *str_right_ptr;
+            if (left.is_double() && right.is_string())
+                return left.to_string() + right.as_string();
 
-            if (str_left_ptr && double_right_ptr)
-                return *str_left_ptr + std::to_string(*double_right_ptr);
+            if (left.is_string() && right.is_double())
+                return left.as_string() + right.to_string();
 
-            if (double_left_ptr && str_right_ptr)
-                return std::to_string(*double_left_ptr) + *str_right_ptr;
+            if (left.is_string() && right.is_string())
+                return left.to_string() + right.to_string();
 
             throw Interpreter::RuntimeError(expr.oprtor, "Interpreter: OPERANDS MUST BE NUMBERS OR STRINGS");
 
             break;
 
-        
+
         case TokenType::POWER:
+
 
             this->checkNumberOperands(expr.oprtor, left, right);
 
-            return std::pow(*double_left_ptr, *double_right_ptr);
+            return std::pow(left.as_double(), right.as_double());
 
             break;
 
-        
         case TokenType::MOD:
 
             this->checkNumberOperands(expr.oprtor, left, right);
 
-            return static_cast<double>(static_cast<int>(*double_left_ptr) % static_cast<int>(*double_right_ptr));
+            if (!static_cast<int>(right.as_double()))
+                throw Interpreter::RuntimeError(expr.oprtor, "Interpreter: DIVISION BY ZERO");
+
+            return std::fmod(left.as_double(), right.as_double());
+
+            break;
 
 
         case TokenType::GREATER:
 
             this->checkNumberOperands(expr.oprtor, left, right);
 
-            return *double_left_ptr > *double_right_ptr;
+            return left.as_double() > right.as_double();
 
             break;
 
@@ -147,7 +143,7 @@ object Interpreter::visitBinaryExpr(const Binary& expr) {
 
             this->checkNumberOperands(expr.oprtor, left, right);
 
-            return *double_left_ptr >= *double_right_ptr;
+            return left.as_double() >= right.as_double();
 
             break;
 
@@ -156,7 +152,7 @@ object Interpreter::visitBinaryExpr(const Binary& expr) {
 
             this->checkNumberOperands(expr.oprtor, left, right);
             
-            return *double_left_ptr < *double_right_ptr;
+            return left.as_double() < right.as_double();
 
             break;
 
@@ -165,7 +161,7 @@ object Interpreter::visitBinaryExpr(const Binary& expr) {
 
             this->checkNumberOperands(expr.oprtor, left, right);
 
-            return *double_left_ptr <= *double_right_ptr;
+            return left.as_double() <= right.as_double();
 
             break;
 
@@ -188,34 +184,28 @@ object Interpreter::visitBinaryExpr(const Binary& expr) {
             break;
     }
 
-    return nullptr;
+    return super::object();
 }
 
 
-object Interpreter::visitLiteralExpr(const Literal& expr) {
+super::object Interpreter::visitLiteralExpr(const Literal& expr) {
 
     return expr.value;
 }
 
 
-bool Interpreter::isTruthy(object obj) {
+bool Interpreter::isTruthy(super::object obj) {
 
-    return std::visit(
+    if (obj.is_null())
+        return false;
 
-        [&](auto&& arg) -> bool {
+    if (obj.is_bool())
+        return obj.as_bool();
 
-            using T = std::decay_t<decltype(arg)>;
+    if (obj.is_double())
+        return static_cast<int>(obj.as_double());
 
-            if constexpr (std::is_same_v<T, nullptr_t>)
-                return false;
-
-            else if constexpr (std::is_same_v<T, bool>)
-                return arg;
-
-            return true;
-
-        }, obj
-    );
+    return true;
 }
 
 
@@ -223,9 +213,9 @@ void Interpreter::interpret(Expr& expr) {
 
     try {
 
-        object val = this->evaluate(expr);
+        super::object val = this->evaluate(expr);
 
-        std::cout << this->objectToString(val) << std::endl;
+        std::cout << val.to_string() << std::endl;
 
     } catch (const Interpreter::RuntimeError& e) {
 
@@ -241,40 +231,24 @@ Interpreter::RuntimeError::RuntimeError(const Token& token, const std::string& e
       token(token) {}
 
 
-void Interpreter::checkNumberOperand(const Token& operatr, const object operand) {
+void Interpreter::checkNumberOperand(const Token& operatr, const super::object operand) {
 
-    if (std::holds_alternative<double>(operand))
+    if (operand.is_double())
         return;
 
     throw Interpreter::RuntimeError(operatr, "Interpreter: OPERAND MUST BE A NUMBER");
 }
 
 
-void Interpreter::checkNumberOperands(const Token& operatr, const object left, const object right) {
+void Interpreter::checkNumberOperands(const Token& operatr, const super::object left, const super::object right) {
 
-    if (std::holds_alternative<double>(left) && std::holds_alternative<double>(right))
+    if (left.is_double() && right.is_double())
         return;
 
     throw Interpreter::RuntimeError(operatr, "Interpreter: OPERANDS MUST BE NUMBERS");
 }
 
 
-std::string Interpreter::objectToString(object obj) {
-
-    if (std::holds_alternative<std::nullptr_t>(obj))
-        return "nil";
-
-    if (std::holds_alternative<double>(obj))
-        return std::format("{}", *std::get_if<double>(&obj));
-
-    if (std::holds_alternative<bool>(obj))
-        return *std::get_if<bool>(&obj) ? "true" : "false";
-
-    if (std::holds_alternative<std::string>(obj))
-        return *std::get_if<std::string>(&obj);
-
-    return "Interpreter: UNEXPECTED CASE";
-}
 
 
 

@@ -16,6 +16,10 @@
 #include <unistd.h>
 
 
+#define CLEAR_SCREEN "\033[2J"
+#define CURSOR_JUMP_TOPLEFT "\033[H"
+
+
 int main(int argc, char** argv) {
 
     cscript repl;
@@ -125,16 +129,32 @@ void cscript::runPrompt(void) {
 
     std::string line;
 
+    std::cout << std::endl << "cscript REPL - Type in expressions (statements not yet supported)" << std::endl << std::endl;
+
+    std::cout << "Type 'quit' or 'exit' or <C-d> to close REPL" << std::endl << std::endl;
+
+    std::cout << "Type 'clear' to clear the screen" << std::endl << std::endl;
+
     std::cout << "<<< ";
 
     while (std::getline(std::cin, line)) {
 
-        if (line == "quit" || line == "exit")
+        if (line == "quit" || line == "exit") {
+
+            std::cout << std::endl << "Shutting Down..." << std::endl << std::endl;
+
             return;
+        }
 
         if (line == "clear") {
 
-            std::cout << "\033[2J" << std::endl;
+            std::cout << CLEAR_SCREEN << CURSOR_JUMP_TOPLEFT << std::endl;
+
+            std::cout << std::endl << "cscript REPL - Type in expressions (statements not yet supported)" << std::endl << std::endl;
+
+            std::cout << "Type 'quit' or 'exit' or <C-d> to close REPL" << std::endl << std::endl;
+
+            std::cout << "Type 'clear' to clear the screen" << std::endl << std::endl;
 
             std::cout << std::endl << "<<< ";
 
@@ -149,6 +169,8 @@ void cscript::runPrompt(void) {
 
         std::cout << std::endl << "<<< ";
     }
+
+    std::cout << std::endl << "Shutting Down..." << std::endl << std::endl;
 
     return;
 }
