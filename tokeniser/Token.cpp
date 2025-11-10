@@ -72,24 +72,6 @@ std::string Token::tokenTypeToString(const TokenType type) const {
 }
 
 
-std::string Token::objectToString(const super::object& obj) const {
-
-    if (obj.is_null())
-        return "nil";
-
-    if (obj.is_bool())
-        return obj.as_bool() ? "true" : "false";
-
-    if (obj.is_double())
-        return std::format("{}", obj.as_double());
-
-    if (obj.is_string())
-        return obj.as_string();
-
-    return "UNEXPECTED OBJECT TYPE";
-}
-
-
 std::string Token::toString(void) const {
 
     return this->tokenTypeToString(this->type) + " " + this->lexeme + " " + std::to_string(this->line);

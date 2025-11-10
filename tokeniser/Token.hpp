@@ -21,7 +21,6 @@ class Token {
         Token(TokenType type, std::string& lexeme, super::object& literal, int line);
 
         std::string tokenTypeToString(const TokenType type) const;
-        std::string objectToString(const super::object& obj) const;
         std::string toString(void) const;
 
         ~Token() = default;
