@@ -104,11 +104,14 @@ void Scanner::scanToken(void) {
         case '.': this->addToken(TokenType::DOT);         break;
         case '-': this->addToken(TokenType::MINUS);       break;
         case '+': this->addToken(TokenType::PLUS);        break;
-        case ';': this->addToken(TokenType::SEMICOLON);   break;
         case '*': this->addToken(TokenType::STAR);        break;
+        case '%': this->addToken(TokenType::MOD);         break;
+        case '^': this->addToken(TokenType::POWER);       break;
+        case ';': this->addToken(TokenType::SEMICOLON);   break;
         case '!': this->addToken(TokenType::BANG);        break;
         case '=': this->addToken(TokenType::EQUAL);       break;
 
+        
         case ':':
 
             if (this->match('='))

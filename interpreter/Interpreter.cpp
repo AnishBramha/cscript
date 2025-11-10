@@ -3,6 +3,7 @@
 #include "../tokeniser/Token.hpp"
 #include "../main/cscript.hpp"
 #include "../superclass/super.hpp"
+#include <cmath>
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
@@ -115,6 +116,22 @@ object Interpreter::visitBinaryExpr(const Binary& expr) {
             throw Interpreter::RuntimeError(expr.oprtor, "Interpreter: OPERANDS MUST BE NUMBERS OR STRINGS");
 
             break;
+
+        
+        case TokenType::POWER:
+
+            this->checkNumberOperands(expr.oprtor, left, right);
+
+            return std::pow(*double_left_ptr, *double_right_ptr);
+
+            break;
+
+        
+        case TokenType::MOD:
+
+            this->checkNumberOperands(expr.oprtor, left, right);
+
+            return static_cast<double>(static_cast<int>(*double_left_ptr) % static_cast<int>(*double_right_ptr));
 
 
         case TokenType::GREATER:

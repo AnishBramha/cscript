@@ -28,6 +28,7 @@ class Parser {
         Expr* unsafe_term(void);
         Expr* unsafe_factor(void);
         Expr* unsafe_unary(void);
+        Expr* unsafe_power(void);
         Expr* unsafe_primary(void);
 
         Token consume(TokenType type, std::string& errMessage);

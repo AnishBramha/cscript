@@ -37,6 +37,8 @@ std::string Token::tokenTypeToString(const TokenType type) const {
         case TokenType::GREATER_EQUAL: return "GREATER_EQUAL";
         case TokenType::LESS:          return "LESS";
         case TokenType::LESS_EQUAL:    return "LESS_EQUAL";
+        case TokenType::MOD:           return "MOD";
+        case TokenType::POWER:         return "POWER";
 
         // Literals
         case TokenType::IDENTIFIER:    return "IDENTIFIER";

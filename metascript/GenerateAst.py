@@ -184,7 +184,7 @@ def declareVisitor(writer, baseName: str, types: list[str]):
 
 if __name__ == '__main__':
 
-    defineAst('.', 'Expr', [
+    defineAst('../syntax', 'Expr', [
 
         'Binary   : Expr left, Token oprtor, Expr right',
         'Grouping : Expr expr',

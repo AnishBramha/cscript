@@ -128,14 +128,14 @@ Expr* Parser::unsafe_term(void) { // free memory later
 
 Expr* Parser::unsafe_factor(void) { // free memory later
 
-    std::unique_ptr<Expr> expr(this->unsafe_unary());
+    std::unique_ptr<Expr> expr(this->unsafe_power());
 
-    std::vector<TokenType> operators = {TokenType::SLASH, TokenType::STAR};
+    std::vector<TokenType> operators = {TokenType::SLASH, TokenType::STAR, TokenType::MOD};
 
     while (this->match(operators)) {
 
         Token operatr = this->previous();
-        
+       
         std::unique_ptr<Expr> right(this->unsafe_unary());
 
         expr = std::make_unique<Binary>(std::move(expr), operatr, std::move(right));
@@ -159,6 +159,25 @@ Expr* Parser::unsafe_unary(void) { // free memory later
     }
 
     return this->unsafe_primary();
+}
+
+
+Expr* Parser::unsafe_power(void) { // free memory later
+
+    std::unique_ptr<Expr> expr(this->unsafe_unary());
+
+    std::vector<TokenType> operators = {TokenType::POWER};
+
+    while (this->match(operators)) {
+
+        Token operatr = this->previous();
+
+        std::unique_ptr<Expr> right(this->unsafe_unary());
+
+        expr = std::make_unique<Binary>(std::move(expr), operatr, std::move(right));
+    }
+
+    return expr.release();
 }
 
 
