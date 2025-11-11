@@ -1,0 +1,5 @@
+// demo program in cscript
+
+ioputf "Hello, World!";
+
+

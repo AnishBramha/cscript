@@ -7,21 +7,41 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <iostream>
 #include "../superclass/super.hpp"
 
 
 Parser::Parser(std::vector<Token>& tokens) : tokens(tokens) {}
 
 
-Expr* Parser::unsafe_parse(void) {
+// older version
+// Expr* Parser::unsafe_parse(void) {
+//
+//     try {
+//
+//         return this->unsafe_expression();
+//
+//     } catch (const Parser::ParseError&) {
+//
+//         return nullptr;
+//     }
+// }
+
+
+std::vector<Stmt*> Parser::unsafe_parse(void) {
 
     try {
 
-        return this->unsafe_expression();
+        std::vector<Stmt*> statements;
+
+        while (!this->isAtEnd())
+            statements.emplace_back(this->unsafe_statement());
+
+        return statements;
     
     } catch (const Parser::ParseError&) {
 
-        return nullptr;
+        return std::vector<Stmt*>({});
     }
 }
 
@@ -268,7 +288,37 @@ void Parser::synchronise(void) {
 }
 
 
+Stmt* Parser::unsafe_statement(void) { // free memory later
 
+    if (this->match({TokenType::IOPUTF}))
+        return this->unsafe_printStatement();
+
+    return this->unsafe_expressionStatement();
+}
+
+
+Stmt* Parser::unsafe_printStatement(void) { // free memory later
+
+    std::unique_ptr<Expr> val(this->unsafe_expression());
+
+    std::string errMessage = "EXPECTED \';\' AFTER VALUE";
+
+    this->consume(TokenType::SEMICOLON, errMessage);
+
+    return new Print(std::move(val));
+}
+
+
+Stmt* Parser::unsafe_expressionStatement(void) { // free memory later
+
+    std::unique_ptr<Expr> expr(this->unsafe_expression());
+
+    std::string errMessage = "EXPECTED \';\' AFTER EXPRESSION";
+
+    this->consume(TokenType::SEMICOLON, errMessage);
+
+    return new Expression(std::move(expr));
+}
 
 
 

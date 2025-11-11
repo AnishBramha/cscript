@@ -1,9 +1,8 @@
 .DS_Store
-.o
-.d
-.cpt
-.out
-repl.out
+*.o
+*.d
+*.cpt
+*.out
 build
 
 

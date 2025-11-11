@@ -3,6 +3,7 @@
 #include "../tokeniser/Token.hpp"
 #include "../main/cscript.hpp"
 #include "../superclass/super.hpp"
+#include "../lexer/Stmt.hpp"
 #include <cmath>
 #include <cstddef>
 #include <cstdlib>
@@ -11,6 +12,7 @@
 #include <string>
 #include <sysexits.h>
 #include <format>
+#include <vector>
 
 
 super::object Interpreter::visitGroupingExpr(const Grouping& expr) {
@@ -194,6 +196,24 @@ super::object Interpreter::visitLiteralExpr(const Literal& expr) {
 }
 
 
+super::object Interpreter::visitExpressionStmt(const Expression& stmt) {
+
+    this->evaluate(*stmt.expr.get());
+
+    return nullptr;
+}
+
+
+super::object Interpreter::visitPrintStmt(const Print& stmt) {
+
+    super::object val = this->evaluate(*stmt.expr.get());
+
+    std::cout << val.to_string() << std::endl;
+
+    return nullptr;
+}
+
+
 bool Interpreter::isTruthy(super::object obj) {
 
     if (obj.is_null())
@@ -209,20 +229,40 @@ bool Interpreter::isTruthy(super::object obj) {
 }
 
 
-void Interpreter::interpret(Expr& expr) {
+// void Interpreter::interpret(Expr& expr) {
+//
+//     try {
+//
+//         super::object val = this->evaluate(expr);
+//
+//         std::cout << val.to_string() << std::endl;
+//
+//     } catch (const Interpreter::RuntimeError& e) {
+//
+//         cscript::runtimeError(e);
+//     }
+//
+//     return;
+// }
+
+
+void Interpreter::interpret(std::vector<Stmt*>& statements) {
 
     try {
 
-        super::object val = this->evaluate(expr);
-
-        std::cout << val.to_string() << std::endl;
-
+        for (auto& statement : statements)
+            this->execute(statement);
+    
     } catch (const Interpreter::RuntimeError& e) {
 
         cscript::runtimeError(e);
     }
+}
 
-    return;
+
+void Interpreter::execute(Stmt* stmt) {
+
+    stmt->accept(*this);
 }
 
 

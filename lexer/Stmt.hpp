@@ -4,7 +4,6 @@
 #include "../tokeniser/Token.hpp"
 #include "./Expr.hpp"
 #include "../superclass/super.hpp"
-
 #include "./Visitor.hpp"
 
 using super::object;

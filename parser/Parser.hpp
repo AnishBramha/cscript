@@ -3,6 +3,7 @@
 
 #include "../lexer/Expr.hpp"
 #include "../tokeniser/Token.hpp"
+#include "../lexer/Stmt.hpp"
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -33,6 +34,10 @@ class Parser {
 
         Token consume(TokenType type, std::string& errMessage);
 
+        Stmt* unsafe_statement(void);
+        Stmt* unsafe_printStatement(void);
+        Stmt* unsafe_expressionStatement(void);
+
         void synchronise(void);
 
 
@@ -49,7 +54,8 @@ class Parser {
 
         Parser(std::vector<Token>& tokens);
 
-        Expr* unsafe_parse(void);
+        // Expr* unsafe_parse(void);
+        std::vector<Stmt*> unsafe_parse(void);
 
         ~Parser() = default;
 };

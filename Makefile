@@ -4,7 +4,7 @@ CXXFLAGS = -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -f
 
 LDFLAGS = -fsanitize=address,undefined -g
 
-TARGET = repl.out
+TARGET = cscpt.out
 BUILD_DIR = build
 
 SRCS = $(shell find . -name "*.cpp")

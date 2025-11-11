@@ -3,15 +3,19 @@
 #include "../lexer/Expr.hpp"
 #include "../tokeniser/Token.hpp"
 #include "../superclass/super.hpp"
+#include "../lexer/Stmt.hpp"
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 
 class Interpreter : public Visitor {
 
     private:
 
-        super::object evaluate(Expr& expr); 
+        super::object evaluate(Expr& expr);
+        void execute(Stmt* stmt);
+
         bool isTruthy(super::object);
         void checkNumberOperand(const Token& operatr, const super::object operand);
         void checkNumberOperands(const Token& operatr, const super::object left, const super::object right);
@@ -23,8 +27,11 @@ class Interpreter : public Visitor {
         super::object visitBinaryExpr(const Binary& expr) override;
         super::object visitLiteralExpr(const Literal& expr) override;
 
-        void interpret(Expr& expr);
+        super::object visitExpressionStmt(const Expression& stmt) override;
+        super::object visitPrintStmt(const Print& stmt) override;
 
+        // void interpret(Expr& expr);
+        void interpret(std::vector<Stmt*>&);
 
         class RuntimeError : public std::runtime_error {
 

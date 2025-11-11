@@ -129,7 +129,7 @@ void cscript::runPrompt(void) {
 
     std::string line;
 
-    std::cout << std::endl << "cscript REPL - Type in expressions (statements not yet supported)" << std::endl << std::endl;
+    std::cout << std::endl << "cscript REPL - Type in expressions and/or statements" << std::endl << std::endl;
 
     std::cout << "Type 'quit' or 'exit' or <C-d> to close REPL" << std::endl << std::endl;
 
@@ -189,20 +189,26 @@ void cscript::run(std::string& source) {
 
     Parser parser(tokens_list);
 
-    Expr* expr = parser.unsafe_parse();
+    std::vector<Stmt*> statements = parser.unsafe_parse();
 
     if (cscript::hadError) {
-        
-        delete expr;
-        expr = nullptr;
+
+        for (auto& statement : statements) {
+
+            delete statement;
+            statement = nullptr;
+        }
 
         return;
     }
 
-    cscript::interpreter.interpret(*expr);
+    cscript::interpreter.interpret(statements);
 
-    delete expr;
-    expr = nullptr;
+    for (auto& statement : statements) {
+
+        delete statement;
+        statement = nullptr;
+    }
 
     return;
 }

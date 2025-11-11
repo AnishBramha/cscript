@@ -97,7 +97,7 @@ def defineAst(outputDir: str, baseName: str, types: list[str], allBaseNames : li
         if hpp_path.endswith('Stmt.hpp') or hpp_path.endswith('Stmt.cpp'):
             writer.write('#include "./Expr.hpp"\n')
 
-        writer.write('#include "../superclass/super.hpp"\n\n')
+        writer.write('#include "../superclass/super.hpp"\n')
         writer.write('#include "./Visitor.hpp"\n\n')
         writer.write('using super::object;\n\n\n')
 

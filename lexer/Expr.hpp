@@ -3,7 +3,6 @@
 #include <memory>
 #include "../tokeniser/Token.hpp"
 #include "../superclass/super.hpp"
-
 #include "./Visitor.hpp"
 
 using super::object;
