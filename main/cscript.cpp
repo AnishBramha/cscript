@@ -1,5 +1,5 @@
 #include "./cscript.hpp"
-#include "../syntax/Expr.hpp"
+#include "../lexer/Expr.hpp"
 #include "../parser/Parser.hpp"
 #include "../tokeniser/Token.hpp"
 #include "../scanner/Scanner.hpp"

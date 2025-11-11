@@ -1,5 +1,5 @@
 #include "./Parser.hpp"
-#include "../syntax/Expr.hpp"
+#include "../lexer/Expr.hpp"
 #include "../tokeniser/Token.hpp"
 #include "../main/cscript.hpp"
 #include <memory>
@@ -220,7 +220,7 @@ Token Parser::consume(TokenType type, std::string& errMessage) {
     if (this->check(type))
         return this->advance();
 
-    throw this->error(this->peek(), errMessage);
+    throw this->error(this->peek(), errMessage); // panic mode
 }
 
 

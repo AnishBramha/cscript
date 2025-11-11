@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "../syntax/Expr.hpp"
+#include "../lexer/Expr.hpp"
 #include "../tokeniser/Token.hpp"
 #include <stdexcept>
 #include <string>

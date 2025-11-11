@@ -1,5 +1,5 @@
 #include "./Interpreter.hpp"
-#include "../syntax/Expr.hpp"
+#include "../lexer/Expr.hpp"
 #include "../tokeniser/Token.hpp"
 #include "../main/cscript.hpp"
 #include "../superclass/super.hpp"
@@ -111,12 +111,12 @@ super::object Interpreter::visitBinaryExpr(const Binary& expr) {
 
         case TokenType::POWER:
 
-
             this->checkNumberOperands(expr.oprtor, left, right);
 
             return std::pow(left.as_double(), right.as_double());
 
             break;
+
 
         case TokenType::MOD:
 
