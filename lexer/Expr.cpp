@@ -5,6 +5,7 @@
 using namespace std;
 using super::object;
 
+
 Binary::Binary(std::unique_ptr<Expr> left, const Token& oprtor, std::unique_ptr<Expr> right) : left(std::move(left)), oprtor(oprtor), right(std::move(right)) {}
 
 object Binary::accept(Visitor& visitor) {

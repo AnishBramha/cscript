@@ -1,4 +1,5 @@
-def declareType(writer, baseName: str, className: str, fieldList: str) -> None:
+
+def declareType(writer, baseName: str, className: str, fieldList: str, allBaseNames : list[str]) -> None:
 
     writer.write(f'class {className} : public {baseName} {{\n\n')
     writer.write('\tpublic:\n\n')
@@ -9,7 +10,7 @@ def declareType(writer, baseName: str, className: str, fieldList: str) -> None:
 
         type_name, name = field.rsplit(' ', 1)
 
-        if type_name == baseName:
+        if type_name in allBaseNames:
             writer.write(f'\t\tconst std::unique_ptr<{type_name}> {name};\n')
 
         else:
@@ -24,11 +25,11 @@ def declareType(writer, baseName: str, className: str, fieldList: str) -> None:
 
         type_name, name = field.rsplit(' ', 1)
 
-        if type_name == baseName:
+        if type_name in allBaseNames:
             paramList.append(f'std::unique_ptr<{type_name}> {name}')
 
         else:
-            paramList.append(f"const {type_name}& {name}")
+            paramList.append(f'const {type_name}& {name}')
 
     writer.write(', '.join(paramList))
     writer.write(');\n\n')
@@ -39,7 +40,7 @@ def declareType(writer, baseName: str, className: str, fieldList: str) -> None:
 
 
 
-def defineType(writer, baseName: str, className: str, fieldList: str) -> None:
+def defineType(writer, baseName: str, className: str, fieldList: str, allBaseNames : list[str]) -> None:
 
     writer.write(f'{className}::{className}(')
     
@@ -51,7 +52,7 @@ def defineType(writer, baseName: str, className: str, fieldList: str) -> None:
 
         type_name, name = field.rsplit(' ', 1)
 
-        if type_name == baseName:
+        if type_name in allBaseNames:
             paramList.append(f'std::unique_ptr<{type_name}> {name}')
 
         else:
@@ -66,7 +67,7 @@ def defineType(writer, baseName: str, className: str, fieldList: str) -> None:
 
         type_name, name = field.rsplit(' ', 1)
 
-        if type_name == baseName:
+        if type_name in allBaseNames:
             initList.append(f'{name}(std::move({name}))')
 
         else:
@@ -83,7 +84,7 @@ def defineType(writer, baseName: str, className: str, fieldList: str) -> None:
 
 
 
-def defineAst(outputDir: str, baseName: str, types: list[str]) -> None:
+def defineAst(outputDir: str, baseName: str, types: list[str], allBaseNames : list[str]) -> None:
 
     hpp_path = f"{outputDir}/{baseName}.hpp"
 
@@ -92,30 +93,26 @@ def defineAst(outputDir: str, baseName: str, types: list[str]) -> None:
         writer.write('#pragma once\n\n')
         writer.write('#include <memory>\n')
         writer.write('#include "../tokeniser/Token.hpp"\n')
+
+        if hpp_path.endswith('Stmt.hpp') or hpp_path.endswith('Stmt.cpp'):
+            writer.write('#include "./Expr.hpp"\n')
+
         writer.write('#include "../superclass/super.hpp"\n\n')
-        writer.write('using super::object;\n\n')
-       
-        typeNames = [_type.split(':')[0].strip() for _type in types]
+        writer.write('#include "./Visitor.hpp"\n\n')
+        writer.write('using super::object;\n\n\n')
 
-        for typeName in typeNames:
-            writer.write(f'class {typeName};\n')
-
-        writer.write('class Visitor;\n\n') 
         writer.write(f'class {baseName} {{\n\n')
         writer.write('\tpublic:\n\n')
-
         writer.write('\t\tvirtual object accept(Visitor& visitor) = 0;\n\n')
-        writer.write(f'\t\tvirtual ~{baseName}() = default;\n');
+        writer.write(f'\t\tvirtual ~{baseName}() = default;\n')
         writer.write('};\n\n\n')
-
-        declareVisitor(writer, baseName, types)
-
+       
         for _type in types:
 
             className = _type.split(':')[0].strip()
             fields = _type.split(':')[1].strip()
 
-            declareType(writer, baseName, className, fields)
+            declareType(writer, baseName, className, fields, allBaseNames)
 
         for _ in range(5):
             writer.write('\n')
@@ -128,34 +125,96 @@ def defineAst(outputDir: str, baseName: str, types: list[str]) -> None:
         writer.write('#include "../superclass/super.hpp"\n\n')
         writer.write(f'#include "./{baseName}.hpp"\n\n')
         writer.write('using namespace std;\n')
-        writer.write('using super::object;\n\n')
+        writer.write('using super::object;\n\n\n')
 
         for _type in types:
 
             className = _type.split(':')[0].strip()
             fields = _type.split(':')[1].strip()
 
-            defineType(writer, baseName, className, fields)
+            defineType(writer, baseName, className, fields, allBaseNames)
 
 
 
 
 
-def declareVisitor(writer, baseName: str, types: list[str]):
+# def declareVisitor(writer, baseName: str, types: list[str]):
+#
+#     writer.write('class Visitor {\n\n')
+#     writer.write('\tpublic:\n\n')
+#
+#     for _type in types:
+#
+#         typeName = _type.split(':')[0].strip()
+#
+#         writer.write(f'\t\tvirtual object visit{typeName}{baseName}(')
+#         writer.write(f'const {typeName}& {baseName.lower()}) = 0;\n')
+#
+#     writer.write('\n\t\tvirtual ~Visitor() = default;\n')
+#     writer.write('};\n\n\n')
 
-    writer.write('class Visitor {\n\n')
-    writer.write('\tpublic:\n\n')
 
-    for _type in types:
 
-        typeName = _type.split(':')[0].strip()
 
-        writer.write(f'\t\tvirtual object visit{typeName}{baseName}(')
-        writer.write(f'const {typeName}& {baseName.lower()}) = 0;\n')
+def declareVisitor(outputDir : str, baseNames : dict[str, list[str]]) -> None:
 
-    writer.write('\n\t\tvirtual ~Visitor() = default;\n')
-    writer.write('};\n\n\n')
+    path = f'{outputDir}/Visitor.hpp'
 
+    with open(path, 'w') as writer:
+
+        writer.write('#pragma once\n\n')
+        writer.write('#include "../superclass/super.hpp"\n\n')
+        writer.write('using super::object;\n\n')
+
+        for baseName, types in baseNames.items():
+
+            for _type in types:
+
+                  className = _type.split(':')[0].strip()
+                  writer.write(f'class {className};\n')
+
+        writer.write('\n\n')
+        writer.write('class Visitor {\n\n')
+        writer.write('\tpublic:\n\n')
+        
+        for baseName, types in baseNames.items():
+
+            for _type in types:
+
+                typeName = _type.split(':')[0].strip()
+                writer.write(f'\t\tvirtual object visit{typeName}{baseName}(')
+                writer.write(f'const {typeName}& {baseName.lower()});\n')
+
+            writer.write('\n')
+
+        writer.write('\n\t\tvirtual ~Visitor() = default;\n')
+        writer.write('};\n\n\n\n\n')
+
+
+
+
+def defineVisitor(outputDir : str, baseNames : dict[str, list[str]]) -> None:
+
+    declareVisitor(outputDir, baseNames)
+
+    cpp_path = f'{outputDir}/Visitor.cpp'
+
+    with open(cpp_path, 'w') as writer:
+
+        writer.write('#include "./Visitor.hpp"\n')
+        writer.write('#include "./Expr.hpp"\n')
+        writer.write('#include "./Stmt.hpp"\n\n')
+        writer.write('using super::object;\n\n')
+
+        for baseName, types in baseNames.items():
+
+            for _type in types:
+
+                typeName = _type.split(':')[0].strip()
+                writer.write(f'object Visitor::visit{typeName}{baseName}(')
+                writer.write(f'const {typeName}& {baseName.lower()}) {{\n\n')
+                writer.write(f'\treturn object();\n')
+                writer.write(f'}}\n\n')
 
 
 
@@ -163,14 +222,34 @@ def declareVisitor(writer, baseName: str, types: list[str]):
 
 if __name__ == '__main__':
 
-    defineAst('../syntax', 'Expr', [
+    exprTypes = [
 
-        'Binary   : Expr left, Token oprtor, Expr right',
-        'Grouping : Expr expr',
-        'Literal  : object value',
-        'Unary    : Token oprtor, Expr right'
-    ])
+        'Binary     : Expr left, Token oprtor, Expr right',
+        'Grouping   : Expr expr',
+        'Literal    : object value',
+        'Unary      : Token oprtor, Expr right'
+    ]
 
+    stmtTypes = [
+
+        'Expression : Expr expr',
+        'Print      : Expr expr'
+    ]
+
+    allTypes = {
+
+        'Expr': exprTypes,
+        'Stmt': stmtTypes
+    }
+
+    allBaseNames = list(allTypes.keys())
+
+    outputDir = '../lexer'
+
+
+    defineVisitor(outputDir, allTypes)
+    defineAst(outputDir, 'Expr', exprTypes, allBaseNames)
+    defineAst(outputDir, 'Stmt', stmtTypes, allBaseNames)
 
 
 
