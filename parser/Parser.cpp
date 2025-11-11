@@ -12,10 +12,25 @@
 
 Parser::Parser(std::vector<Token>& tokens) : tokens(tokens) {}
 
+
+Expr* Parser::unsafe_parse(void) {
+
+    try {
+
+        return this->unsafe_expression();
+    
+    } catch (const Parser::ParseError&) {
+
+        return nullptr;
+    }
+}
+
+
 Expr* Parser::unsafe_expression(void) {
 
     return this->unsafe_equality();
 }
+
 
 Expr* Parser::unsafe_equality(void) { // free memory later
 
@@ -31,58 +46,6 @@ Expr* Parser::unsafe_equality(void) { // free memory later
     }
 
     return expr.release();
-}
-
-
-bool Parser::match(const std::vector<TokenType>& types) {
-
-    for (const TokenType type : types) {
-
-        if (this->check(type)) {
-
-            this->advance();
-
-            return true;
-        }
-    }
-
-    return false;
-}
-
-
-bool Parser::check(TokenType type) {
-
-    if (this->isAtEnd())
-        return false;
-
-    return this->peek().type == type;
-}
-
-
-Token Parser::advance(void) {
-
-    if (!this->isAtEnd())
-        this->current++;
-
-    return this->previous();
-}
-
-
-bool Parser::isAtEnd(void) {
-
-    return this->peek().type == TokenType::END_OF_FILE;
-}
-
-
-Token Parser::peek(void) {
-
-    return this->tokens.at(this->current);
-}
-
-
-Token Parser::previous(void) {
-
-    return this->tokens.at(this->current - 1);
 }
 
 
@@ -200,6 +163,58 @@ Expr* Parser::unsafe_primary(void) { // free memory later
 }
 
 
+bool Parser::match(const std::vector<TokenType>& types) {
+
+    for (const TokenType type : types) {
+
+        if (this->check(type)) {
+
+            this->advance();
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+bool Parser::check(TokenType type) {
+
+    if (this->isAtEnd())
+        return false;
+
+    return this->peek().type == type;
+}
+
+
+Token Parser::advance(void) {
+
+    if (!this->isAtEnd())
+        this->current++;
+
+    return this->previous();
+}
+
+
+bool Parser::isAtEnd(void) {
+
+    return this->peek().type == TokenType::END_OF_FILE;
+}
+
+
+Token Parser::peek(void) {
+
+    return this->tokens.at(this->current);
+}
+
+
+Token Parser::previous(void) {
+
+    return this->tokens.at(this->current - 1);
+}
+
+
 Token Parser::consume(TokenType type, std::string& errMessage) {
 
     if (this->check(type))
@@ -252,18 +267,6 @@ void Parser::synchronise(void) {
     return;
 }
 
-
-Expr* Parser::unsafe_parse(void) {
-
-    try {
-
-        return this->unsafe_expression();
-    
-    } catch (const Parser::ParseError&) {
-
-        return nullptr;
-    }
-}
 
 
 
