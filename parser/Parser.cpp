@@ -21,9 +21,7 @@ Expr* Parser::unsafe_equality(void) { // free memory later
 
     std::unique_ptr<Expr> expr(this->unsafe_comparison());
 
-    std::vector<TokenType> operators = {TokenType::NOT_EQUAL, TokenType::EQUAL};
-
-    while (this->match(operators)) {
+    while (this->match({TokenType::NOT_EQUAL, TokenType::EQUAL})) {
 
         Token operatr = this->previous();
 
@@ -36,7 +34,7 @@ Expr* Parser::unsafe_equality(void) { // free memory later
 }
 
 
-bool Parser::match(std::vector<TokenType>& types) {
+bool Parser::match(const std::vector<TokenType>& types) {
 
     for (const TokenType type : types) {
 
@@ -92,9 +90,7 @@ Expr* Parser::unsafe_comparison(void) { // free memory later
 
     std::unique_ptr<Expr> expr(this->unsafe_term());
 
-    std::vector<TokenType> operators = {TokenType::GREATER, TokenType::GREATER_EQUAL, TokenType::LESS, TokenType::LESS_EQUAL};
-
-    while (this->match(operators)) {
+    while (this->match({TokenType::GREATER, TokenType::GREATER_EQUAL, TokenType::LESS, TokenType::LESS_EQUAL})) {
 
         Token operatr = this->previous();
 
@@ -111,9 +107,7 @@ Expr* Parser::unsafe_term(void) { // free memory later
 
     std::unique_ptr<Expr> expr(this->unsafe_factor());
 
-    std::vector<TokenType> operators = {TokenType::MINUS, TokenType::PLUS};
-
-    while (this->match(operators)) {
+    while (this->match({TokenType::MINUS, TokenType::PLUS})) {
 
         Token operatr = this->previous();
 
@@ -130,9 +124,7 @@ Expr* Parser::unsafe_factor(void) { // free memory later
 
     std::unique_ptr<Expr> expr(this->unsafe_power());
 
-    std::vector<TokenType> operators = {TokenType::SLASH, TokenType::STAR, TokenType::MOD};
-
-    while (this->match(operators)) {
+    while (this->match({TokenType::SLASH, TokenType::STAR, TokenType::MOD})) {
 
         Token operatr = this->previous();
         
@@ -149,9 +141,7 @@ Expr* Parser::unsafe_power(void) { // free memory later
 
     std::unique_ptr<Expr> expr(this->unsafe_unary());
 
-    std::vector<TokenType> operators = {TokenType::POWER};
-
-    while (this->match(operators)) {
+    while (this->match({TokenType::POWER})) {
 
         Token operatr = this->previous();
 
@@ -166,9 +156,7 @@ Expr* Parser::unsafe_power(void) { // free memory later
 
 Expr* Parser::unsafe_unary(void) { // free memory later
 
-    std::vector<TokenType> operators = {TokenType::BANG, TokenType::MINUS};
-
-    if (this->match(operators)) {
+    if (this->match({TokenType::BANG, TokenType::MINUS})) {
 
         Token operatr = this->previous();
 
@@ -183,35 +171,19 @@ Expr* Parser::unsafe_unary(void) { // free memory later
 
 Expr* Parser::unsafe_primary(void) { // free memory later
 
-    std::vector<TokenType> t1 = {TokenType::FALSE}, t2 = {TokenType::TRUE}, t3 = {TokenType::NIL}, t4 = {TokenType::NUMBER, TokenType::STRING}, t5 = {TokenType::LEFT_PAREN};
+    if (this->match({TokenType::FALSE}))
+        return new Literal(false);
 
-    super::object literal;
+    if (this->match({TokenType::TRUE}))
+        return new Literal(true);
 
-    if (this->match(t1)) {
-
-        literal = false;
-
-        return new Literal(literal);
-
-    } if (this->match(t2)) {
-
-        literal = true;
-
-        return new Literal(literal);
-
-    } if (this->match(t3)) {
-
-        literal = nullptr;
-
-        return new Literal(literal);
+    if (this->match({TokenType::NIL}))
+        return new Literal(nullptr);
     
-    } if (match(t4)) {
+    if (this->match({TokenType::NUMBER, TokenType::STRING}))
+        return new Literal(this->previous().literal);
 
-        literal = this->previous().literal;
-
-        return new Literal(literal);
-
-    } if (match(t5)) {
+    if (this->match({TokenType::LEFT_PAREN})) {
 
         std::unique_ptr<Expr> expr(this->unsafe_expression());
 

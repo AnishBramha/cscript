@@ -2,11 +2,9 @@
 #include "./Expr.hpp"
 #include <cstddef>
 #include <cstdlib>
-#include <iostream>
 #include <sstream>
 #include <string>
 #include <sysexits.h>
-#include <type_traits>
 #include <vector>
 #include "../superclass/super.hpp"
 
@@ -48,7 +46,7 @@ super::object AstPrinter::visitGroupingExpr(const Grouping& expr) {
 
 super::object AstPrinter::visitLiteralExpr(const Literal& expr) {
 
-    return expr.value.as_string();
+    return expr.value.to_string();
 }
 
 

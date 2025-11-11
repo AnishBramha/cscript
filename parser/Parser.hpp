@@ -15,7 +15,7 @@ class Parser {
         std::vector<Token> tokens;
         int current = 0;
 
-        bool match(std::vector<TokenType>& types);
+        bool match(const std::vector<TokenType>& types);
         bool check(TokenType type);
         bool isAtEnd(void);
         Token peek(void);
