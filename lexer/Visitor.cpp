@@ -24,12 +24,22 @@ object Visitor::visitUnaryExpr(const Unary& expr) {
 	return object();
 }
 
+object Visitor::visitVariableExpr(const Variable& expr) {
+
+	return object();
+}
+
 object Visitor::visitExpressionStmt(const Expression& stmt) {
 
 	return object();
 }
 
 object Visitor::visitPrintStmt(const Print& stmt) {
+
+	return object();
+}
+
+object Visitor::visitVarStmt(const Var& stmt) {
 
 	return object();
 }

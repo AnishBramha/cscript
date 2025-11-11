@@ -22,3 +22,11 @@ object Print::accept(Visitor& visitor) {
 }
 
 
+Var::Var(const Token& name, std::unique_ptr<Expr> initialiser) : name(name), initialiser(std::move(initialiser)) {}
+
+object Var::accept(Visitor& visitor) {
+
+	return visitor.visitVarStmt(*this);
+}
+
+

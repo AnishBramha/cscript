@@ -137,25 +137,6 @@ def defineAst(outputDir: str, baseName: str, types: list[str], allBaseNames : li
 
 
 
-
-# def declareVisitor(writer, baseName: str, types: list[str]):
-#
-#     writer.write('class Visitor {\n\n')
-#     writer.write('\tpublic:\n\n')
-#
-#     for _type in types:
-#
-#         typeName = _type.split(':')[0].strip()
-#
-#         writer.write(f'\t\tvirtual object visit{typeName}{baseName}(')
-#         writer.write(f'const {typeName}& {baseName.lower()}) = 0;\n')
-#
-#     writer.write('\n\t\tvirtual ~Visitor() = default;\n')
-#     writer.write('};\n\n\n')
-
-
-
-
 def declareVisitor(outputDir : str, baseNames : dict[str, list[str]]) -> None:
 
     path = f'{outputDir}/Visitor.hpp'
@@ -227,13 +208,15 @@ if __name__ == '__main__':
         'Binary     : Expr left, Token oprtor, Expr right',
         'Grouping   : Expr expr',
         'Literal    : object value',
-        'Unary      : Token oprtor, Expr right'
+        'Unary      : Token oprtor, Expr right',
+        'Variable   : Token name'
     ]
 
     stmtTypes = [
 
         'Expression : Expr expr',
-        'Print      : Expr expr'
+        'Print      : Expr expr',
+        'Var        : Token name, Expr initialiser'
     ]
 
     allTypes = {

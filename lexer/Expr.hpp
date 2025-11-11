@@ -73,6 +73,19 @@ class Unary : public Expr {
 };
 
 
+class Variable : public Expr {
+
+	public:
+
+		const Token name;
+
+		Variable(const Token& name);
+
+		object accept(Visitor& visitor) override;
+
+};
+
+
 
 
 

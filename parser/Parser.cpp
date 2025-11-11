@@ -14,20 +14,6 @@
 Parser::Parser(std::vector<Token>& tokens) : tokens(tokens) {}
 
 
-// older version
-// Expr* Parser::unsafe_parse(void) {
-//
-//     try {
-//
-//         return this->unsafe_expression();
-//
-//     } catch (const Parser::ParseError&) {
-//
-//         return nullptr;
-//     }
-// }
-
-
 std::vector<Stmt*> Parser::unsafe_parse(void) {
 
     try {
@@ -35,7 +21,7 @@ std::vector<Stmt*> Parser::unsafe_parse(void) {
         std::vector<Stmt*> statements;
 
         while (!this->isAtEnd())
-            statements.emplace_back(this->unsafe_statement());
+            statements.emplace_back(this->unsafe_declaration());
 
         return statements;
     
@@ -166,6 +152,9 @@ Expr* Parser::unsafe_primary(void) { // free memory later
     if (this->match({TokenType::NUMBER, TokenType::STRING}))
         return new Literal(this->previous().literal);
 
+    if (this->match({TokenType::IDENTIFIER}))
+        return new Variable(this->previous());
+
     if (this->match({TokenType::LEFT_PAREN})) {
 
         std::unique_ptr<Expr> expr(this->unsafe_expression());
@@ -180,6 +169,75 @@ Expr* Parser::unsafe_primary(void) { // free memory later
     std::string errMessage = "EXPECTED EXPRESSION";
 
     throw Parser::error(this->peek(), errMessage);
+}
+
+
+Stmt* Parser::unsafe_statement(void) { // free memory later
+
+    if (this->match({TokenType::IOPUTF}))
+        return this->unsafe_printStatement();
+
+    return this->unsafe_expressionStatement();
+}
+
+
+Stmt* Parser::unsafe_printStatement(void) { // free memory later
+
+    std::unique_ptr<Expr> val(this->unsafe_expression());
+
+    std::string errMessage = "EXPECTED \';\' AFTER VALUE";
+
+    this->consume(TokenType::SEMICOLON, errMessage);
+
+    return new Print(std::move(val));
+}
+
+
+Stmt* Parser::unsafe_expressionStatement(void) { // free memory later
+
+    std::unique_ptr<Expr> expr(this->unsafe_expression());
+
+    std::string errMessage = "EXPECTED \';\' AFTER EXPRESSION";
+
+    this->consume(TokenType::SEMICOLON, errMessage);
+
+    return new Expression(std::move(expr));
+}
+
+Stmt* Parser::unsafe_declaration(void) { // free memory later
+
+    try {
+
+        if (this->match({TokenType::VAR}))
+            return this->unsafe_varDeclaration();
+
+        return this->unsafe_statement();
+    
+    } catch (const Parser::ParseError&) {
+
+        this->synchronise();
+
+        return nullptr;
+    }
+}
+
+
+Stmt* Parser::unsafe_varDeclaration(void) {
+
+    std::string errMessage = "EXPECTED VARIABLE NAME";
+
+    Token name = this->consume(TokenType::IDENTIFIER, errMessage);
+
+    std::unique_ptr<Expr> initialiser;
+
+    if (this->match({TokenType::ASSIGN}))
+        initialiser.reset(this->unsafe_expression());
+
+    errMessage = "EXPECTED \';\' AFTER VARIABLE DECLARATION";
+
+    this->consume(TokenType::SEMICOLON, errMessage);
+
+    return new Var(name, std::move(initialiser));
 }
 
 
@@ -288,37 +346,6 @@ void Parser::synchronise(void) {
 }
 
 
-Stmt* Parser::unsafe_statement(void) { // free memory later
-
-    if (this->match({TokenType::IOPUTF}))
-        return this->unsafe_printStatement();
-
-    return this->unsafe_expressionStatement();
-}
-
-
-Stmt* Parser::unsafe_printStatement(void) { // free memory later
-
-    std::unique_ptr<Expr> val(this->unsafe_expression());
-
-    std::string errMessage = "EXPECTED \';\' AFTER VALUE";
-
-    this->consume(TokenType::SEMICOLON, errMessage);
-
-    return new Print(std::move(val));
-}
-
-
-Stmt* Parser::unsafe_expressionStatement(void) { // free memory later
-
-    std::unique_ptr<Expr> expr(this->unsafe_expression());
-
-    std::string errMessage = "EXPECTED \';\' AFTER EXPRESSION";
-
-    this->consume(TokenType::SEMICOLON, errMessage);
-
-    return new Expression(std::move(expr));
-}
 
 
 

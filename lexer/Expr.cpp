@@ -38,3 +38,11 @@ object Unary::accept(Visitor& visitor) {
 }
 
 
+Variable::Variable(const Token& name) : name(name) {}
+
+object Variable::accept(Visitor& visitor) {
+
+	return visitor.visitVariableExpr(*this);
+}
+
+

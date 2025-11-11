@@ -4,6 +4,7 @@
 #include "../tokeniser/Token.hpp"
 #include "../superclass/super.hpp"
 #include "../lexer/Stmt.hpp"
+#include "../environment/Environment.hpp"
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -12,6 +13,8 @@
 class Interpreter : public Visitor {
 
     private:
+
+        Environment environment;
 
         super::object evaluate(Expr& expr);
         void execute(Stmt* stmt);
@@ -29,8 +32,9 @@ class Interpreter : public Visitor {
 
         super::object visitExpressionStmt(const Expression& stmt) override;
         super::object visitPrintStmt(const Print& stmt) override;
+        super::object visitVarStmt(const Var& stmt) override;
+        super::object visitVariableExpr(const Variable& expr) override;
 
-        // void interpret(Expr& expr);
         void interpret(std::vector<Stmt*>&);
 
         class RuntimeError : public std::runtime_error {

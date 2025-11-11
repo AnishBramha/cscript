@@ -4,6 +4,7 @@
 #include "../main/cscript.hpp"
 #include "../superclass/super.hpp"
 #include "../lexer/Stmt.hpp"
+#include "../environment/Environment.hpp"
 #include <cmath>
 #include <cstddef>
 #include <cstdlib>
@@ -211,6 +212,25 @@ super::object Interpreter::visitPrintStmt(const Print& stmt) {
     std::cout << val.to_string() << std::endl;
 
     return nullptr;
+}
+
+
+super::object Interpreter::visitVarStmt(const Var& stmt) {
+
+    super::object val = nullptr;
+
+    if (stmt.initialiser.get())
+        val = this->evaluate(*stmt.initialiser.get());
+
+    this->environment.define(stmt.name.lexeme, val);
+
+    return nullptr;
+}
+
+
+super::object Interpreter::visitVariableExpr(const Variable& expr) {
+
+    return this->environment.get(expr.name);
 }
 
 

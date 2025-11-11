@@ -45,6 +45,20 @@ class Print : public Stmt {
 };
 
 
+class Var : public Stmt {
+
+	public:
+
+		const Token name;
+		const std::unique_ptr<Expr> initialiser;
+
+		Var(const Token& name, std::unique_ptr<Expr> initialiser);
+
+		object accept(Visitor& visitor) override;
+
+};
+
+
 
 
 

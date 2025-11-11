@@ -37,6 +37,8 @@ class Parser {
         Stmt* unsafe_statement(void);
         Stmt* unsafe_printStatement(void);
         Stmt* unsafe_expressionStatement(void);
+        Stmt* unsafe_declaration(void);
+        Stmt* unsafe_varDeclaration(void);
 
         void synchronise(void);
 
