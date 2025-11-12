@@ -2,7 +2,7 @@
 My implementation of Robert Nystrom's jlox interpreter, ported to C++.
 
 ### Requirements
-- C++ (20 or later)
+- clang (C++ 20 or later)
 - Unix-based OS (does not support Windows)
 
 To get started, clone this repository and run:
