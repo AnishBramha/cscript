@@ -18,6 +18,13 @@ super::object::object(const std::string& obj) : obj(obj) {}
 
 super::object::object(const char* obj) : obj(std::string(obj)) {}
 
+super::object::object(super::uninitialised_t) : obj(super::uninitialised_t{}) {}
+
+
+bool super::object::is_uninitialised(void) const {
+
+    return std::holds_alternative<super::uninitialised_t>(this->obj);
+}
 
 bool super::object::is_null(void) const {
 
@@ -94,7 +101,7 @@ std::string super::object::as_string(void) const {
 
 std::string super::object::to_string(void) const {
 
-    if (this->is_null())
+    if (this->is_null() || this->is_uninitialised())
         return "nil";
 
     if (this->is_bool())

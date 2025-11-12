@@ -19,12 +19,10 @@ class Parser {
 
         bool match(const std::vector<TokenType>& types);
         bool check(TokenType type);
-        bool isAtEnd(void);
         Token peek(void);
         Token advance(void);
         Token previous(void);
 
-        Expr* unsafe_expression(void);
         Expr* unsafe_assignment(void);
         Expr* unsafe_equality(void);
         Expr* unsafe_comparison(void);
@@ -46,6 +44,16 @@ class Parser {
         void synchronise(void);
 
 
+    public:
+
+        Parser(std::vector<Token>& tokens);
+
+        bool isAtEnd(void);
+
+        std::vector<Stmt*> unsafe_parse(void);
+        Expr* unsafe_expression(void);
+
+
         class ParseError : public std::runtime_error {
 
             public:
@@ -53,15 +61,11 @@ class Parser {
                 ParseError();
         };
 
-        ParseError error(Token token, std::string& errMessage);
-    
-    public:
-
-        Parser(std::vector<Token>& tokens);
-
-        std::vector<Stmt*> unsafe_parse(void);
-
         ~Parser() = default;
+
+    private:
+
+        ParseError error(Token token, std::string& errMessage);
 };
 
 

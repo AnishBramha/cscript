@@ -13,16 +13,6 @@ Environment::Environment(Environment* enclosing)
     : enclosing(enclosing) {}
 
 
-// Environment& Environment::operator=(Environment& e) {
-//
-//     this->values = e.values;
-//
-//     this->enclosing = e.enclosing;
-//
-//     return *this;
-// }
-
-
 void Environment::define(const Token& name, super::object val) {
 
     if (this->values.find(name.lexeme) == this->values.end())
@@ -37,8 +27,15 @@ void Environment::define(const Token& name, super::object val) {
 
 super::object Environment::get(const Token& name) {
 
-    if (this->values.find(name.lexeme) != this->values.end())
-        return this->values.at(name.lexeme);
+    if (this->values.find(name.lexeme) != this->values.end()) {
+
+        super::object val = this->values.at(name.lexeme);
+
+        if (val.is_uninitialised())
+            throw Interpreter::RuntimeError(name, "UNINITIALISED VARIABLE \'" + name.lexeme + "\'");
+
+        return val;
+    }
 
     if (this->enclosing)
         return this->enclosing->get(name);

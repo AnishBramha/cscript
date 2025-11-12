@@ -21,8 +21,6 @@ class Environment {
         Environment();
         Environment(Environment* enclosing);
 
-        // Environment& operator=(Environment&);
-        
         void define(const Token& name, super::object value);
         void assign(const Token& name, super::object val);
 

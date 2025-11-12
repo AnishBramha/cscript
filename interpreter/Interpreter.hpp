@@ -17,6 +17,7 @@ class Interpreter : public Visitor {
 
         Environment* environment;
         std::unique_ptr<Environment> global;
+        bool repl = false;
 
         super::object evaluate(Expr& expr);
         void execute(Stmt* stmt);
@@ -42,7 +43,7 @@ class Interpreter : public Visitor {
         super::object visitAssignExpr(const Assign& expr) override;
         super::object visitBlockStmt(const Block& stmt) override;
 
-        void interpret(std::vector<Stmt*>&);
+        void interpret(std::vector<Stmt*>& statements, bool repl);
 
         class RuntimeError : public std::runtime_error {
 

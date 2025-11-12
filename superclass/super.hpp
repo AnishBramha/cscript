@@ -7,6 +7,19 @@
 
 namespace super {
 
+    struct uninitialised_t {
+
+        constexpr bool operator==(const uninitialised_t&) const {
+
+            return true;
+        }
+
+        constexpr bool operator!=(const uninitialised_t&) const {
+
+            return false;
+        }
+    };
+
     class object {
 
         private:
@@ -16,7 +29,8 @@ namespace super {
                 bool,
                 double,
                 std::string,
-                std::nullptr_t
+                std::nullptr_t,
+                uninitialised_t
             >;
 
             var obj;
@@ -29,6 +43,7 @@ namespace super {
             object(double);
             object(const std::string&);
             object(const char*);
+            object(uninitialised_t);
 
             object(const object&) = default;
             object(object&&) = default;
@@ -37,6 +52,7 @@ namespace super {
 
             ~object() = default;
 
+            bool is_uninitialised(void) const;
             bool is_null(void) const;
             bool is_bool(void) const;
             bool is_double(void) const;

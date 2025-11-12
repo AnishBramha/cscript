@@ -6,9 +6,11 @@
 #include <cstdlib>
 #include <exception>
 #include <iostream>
+#include <memory>
 #include <ostream>
 #include <string>
 #include <fstream>
+#include <utility>
 #include <vector>
 #include <filesystem>
 #include <iterator>
@@ -52,51 +54,6 @@ int main(int argc, char** argv) {
 }
 
 
-
-// testing purposes
-//
-// int main(void) {
-//
-//     std::string minus = "-";
-//     std::string star = "*";
-//
-//     object n1 = static_cast<double>(123);
-//     Literal* l1 = new Literal(n1);
-//     std::unique_ptr<Expr> _l1(l1);
-//
-//     object n2 = 45.67;
-//     Literal* l2 = new Literal(n2);
-//     std::unique_ptr<Expr> _l2(l2);
-//
-//     object null_t = nullptr;
-//     Token* t1 = new Token(TokenType::MINUS, minus, null_t, 1);
-//     Token* t2 = new Token(TokenType::STAR, star, null_t, 1);
-//
-//     Unary* u1 = new Unary(*t1, std::move(_l1));
-//     std::unique_ptr<Expr> _u1(u1);
-//
-//     Grouping* g1 = new Grouping(std::move(_l2));
-//     std::unique_ptr<Expr> _g1(g1);
-//
-//     Expr* expr = new Binary(std::move(_u1), *t2, std::move(_g1));
-//
-//     AstPrinter* astp = new AstPrinter;
-//
-//     std::cout << astp->print(*expr) << std::endl;
-//
-//     delete t1; t1 = nullptr;
-//     delete t2; t2 = nullptr;
-//     delete expr; expr = nullptr;
-//     delete astp; astp = nullptr;
-//
-//     l1 = nullptr; _l1 = nullptr;
-//     l2 = nullptr; _l2 = nullptr;
-//     _u1 = nullptr; _g1 = nullptr;
-//
-//     return 0;
-// }
-
-
 void cscript::runFile(std::filesystem::path& path) {
 
     std::ifstream fin(path, std::ios::binary);
@@ -111,7 +68,7 @@ void cscript::runFile(std::filesystem::path& path) {
 
     std::string content(bytes.begin(), bytes.end());
 
-    cscript::run(content);
+    cscript::run(content, false);
 
     if (cscript::hadError)
         std::exit(EX_IOERR);
@@ -150,7 +107,7 @@ void cscript::runPrompt(void) {
 
             std::cout << CLEAR_SCREEN << CURSOR_JUMP_TOPLEFT << std::endl;
 
-            std::cout << std::endl << "cscript REPL - Type in expressions (statements not yet supported)" << std::endl << std::endl;
+            std::cout << std::endl << "cscript REPL - Type in expressions and/or statements" << std::endl << std::endl;
 
             std::cout << "Type 'quit' or 'exit' or <C-d> to close REPL" << std::endl << std::endl;
 
@@ -163,7 +120,7 @@ void cscript::runPrompt(void) {
 
         std::cout << ">>> ";
     
-        cscript::run(line);
+        cscript::run(line, true);
 
         cscript::hadError = false;
 
@@ -176,7 +133,7 @@ void cscript::runPrompt(void) {
 }
 
 
-void cscript::run(std::string& source) {
+void cscript::run(std::string& source, bool repl) {
 
     Scanner scanner(source);
     
@@ -193,6 +150,38 @@ void cscript::run(std::string& source) {
 
     if (cscript::hadError) {
 
+        if (repl) {
+
+            try {
+
+                cscript::hadError = false;
+
+                Parser parser(tokens_list);
+
+                Expr* expr = parser.unsafe_expression();
+
+                if (!cscript::hadError && parser.isAtEnd()) {
+
+                    std::unique_ptr<Expr> _expr(expr);
+
+                    Stmt* print = new Print(std::move(_expr));
+
+                    std::vector<Stmt*> replStatements;
+                    replStatements.push_back(print);
+
+                    cscript::interpreter.interpret(replStatements, repl);
+
+                    delete print;
+                    print = nullptr;
+
+                    return;
+                }
+                
+            } catch (const Parser::ParseError&) {
+
+            }
+        }
+
         for (auto& statement : statements) {
 
             delete statement;
@@ -202,7 +191,7 @@ void cscript::run(std::string& source) {
         return;
     }
 
-    cscript::interpreter.interpret(statements);
+    cscript::interpreter.interpret(statements, repl);
 
     for (auto& statement : statements) {
 
