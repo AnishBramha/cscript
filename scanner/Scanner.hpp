@@ -26,6 +26,7 @@ class Scanner {
             {"nil",    TokenType::NIL},
             {"or",     TokenType::OR},
             {"ioputf", TokenType::IOPUTF},
+            {"then",   TokenType::THEN},
             {"this",   TokenType::THIS},
             {"true",   TokenType::TRUE},
             {"var",    TokenType::VAR},

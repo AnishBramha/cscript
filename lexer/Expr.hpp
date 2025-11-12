@@ -73,6 +73,21 @@ class Literal : public Expr {
 };
 
 
+class Logical : public Expr {
+
+	public:
+
+		const std::unique_ptr<Expr> left;
+		const Token operatr;
+		const std::unique_ptr<Expr> right;
+
+		Logical(std::unique_ptr<Expr> left, const Token& operatr, std::unique_ptr<Expr> right);
+
+		object accept(Visitor& visitor) override;
+
+};
+
+
 class Unary : public Expr {
 
 	public:

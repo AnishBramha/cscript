@@ -223,6 +223,7 @@ if __name__ == '__main__':
         'Binary     : Expr left, Token oprtor, Expr right',
         'Grouping   : Expr expr',
         'Literal    : object value',
+        'Logical    : Expr left, Token operatr, Expr right',
         'Unary      : Token oprtor, Expr right',
         'Variable   : Token name'
     ]
@@ -231,8 +232,10 @@ if __name__ == '__main__':
 
         'Block      : vector<unique_ptr<Stmt>> statements',
         'Expression : Expr expr',
+        'If         : Expr condition, Stmt thenBranch, Stmt elseBranch',
         'Print      : Expr expr',
-        'Var        : Token name, Expr initialiser'
+        'Var        : Token name, Expr initialiser',
+        'While      : Expr condition, Stmt body'
     ]
 
     allTypes = {

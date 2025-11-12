@@ -269,6 +269,15 @@ super::object Interpreter::visitVarStmt(const Var& stmt) {
 }
 
 
+super::object Interpreter::visitWhileStmt(const While& stmt) {
+
+    while (this->isTruthy(this->evaluate(*stmt.condition.get())))
+        this->execute(stmt.body.get());
+
+    return nullptr;
+}
+
+
 super::object Interpreter::visitVariableExpr(const Variable& expr) {
 
     return this->environment->get(expr.name);

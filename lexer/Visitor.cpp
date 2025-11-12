@@ -32,6 +32,11 @@ object Visitor::visitLiteralExpr(const Literal& expr) {
 	return object();
 }
 
+object Visitor::visitLogicalExpr(const Logical& expr) {
+
+	return object();
+}
+
 object Visitor::visitUnaryExpr(const Unary& expr) {
 
 	return object();
@@ -52,12 +57,22 @@ object Visitor::visitExpressionStmt(const Expression& stmt) {
 	return object();
 }
 
+object Visitor::visitIfStmt(const If& stmt) {
+
+	return object();
+}
+
 object Visitor::visitPrintStmt(const Print& stmt) {
 
 	return object();
 }
 
 object Visitor::visitVarStmt(const Var& stmt) {
+
+	return object();
+}
+
+object Visitor::visitWhileStmt(const While& stmt) {
 
 	return object();
 }

@@ -38,6 +38,14 @@ object Literal::accept(Visitor& visitor) {
 }
 
 
+Logical::Logical(std::unique_ptr<Expr> left, const Token& operatr, std::unique_ptr<Expr> right) : left(std::move(left)), operatr(operatr), right(std::move(right)) {}
+
+object Logical::accept(Visitor& visitor) {
+
+	return visitor.visitLogicalExpr(*this);
+}
+
+
 Unary::Unary(const Token& oprtor, std::unique_ptr<Expr> right) : oprtor(oprtor), right(std::move(right)) {}
 
 object Unary::accept(Visitor& visitor) {

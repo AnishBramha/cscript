@@ -2,6 +2,7 @@
 #include "../lexer/Expr.hpp"
 #include "../tokeniser/Token.hpp"
 #include "../main/cscript.hpp"
+#include <algorithm>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -40,7 +41,7 @@ Expr* Parser::unsafe_expression(void) {
 
 Expr* Parser::unsafe_assignment(void) {
 
-    std::unique_ptr<Expr> expr(this->unsafe_equality());
+    std::unique_ptr<Expr> expr(this->unsafe_or());
 
     if (this->match({TokenType::ASSIGN})) {
 
@@ -59,6 +60,40 @@ Expr* Parser::unsafe_assignment(void) {
         std::string errMessage = "INVALID ASSIGNMENT TARGET";
 
         cscript::error(assign, errMessage);
+    }
+
+    return expr.release();
+}
+
+
+Expr* Parser::unsafe_or(void) {
+
+    std::unique_ptr<Expr> expr(this->unsafe_and());
+
+    while (this->match({TokenType::OR})) {
+
+        Token operatr = this->previous();
+
+        std::unique_ptr<Expr> right(this->unsafe_and());
+
+        expr = std::make_unique<Logical>(std::move(expr), operatr, std::move(right));
+    }
+
+    return expr.release();
+}
+
+
+Expr* Parser::unsafe_and(void) {
+
+    std::unique_ptr<Expr> expr(this->unsafe_equality());
+
+    while (this->match({TokenType::AND})) {
+
+        Token operatr = this->previous();
+
+        std::unique_ptr<Expr> right(this->unsafe_equality());
+
+        expr = std::make_unique<Logical>(std::move(expr), operatr, std::move(right));
     }
 
     return expr.release();
@@ -201,13 +236,132 @@ Expr* Parser::unsafe_primary(void) { // free memory later
 
 Stmt* Parser::unsafe_statement(void) { // free memory later
 
+    if (this->match({TokenType::FOR}))
+        return this->unsafe_forStatement();
+
+    if (this->match({TokenType::IF}))
+        return this->unsafe_ifStatement();
+
     if (this->match({TokenType::IOPUTF}))
         return this->unsafe_printStatement();
+
+    if (this->match({TokenType::WHILE}))
+        return this->unsafe_whileStatement();
 
     if (this->match({TokenType::LEFT_BRACE}))
         return new Block(this->unsafe_block());
 
     return this->unsafe_expressionStatement();
+}
+
+
+Stmt* Parser::unsafe_forStatement(void) {
+
+    std::string errMessage = "EXPECTED \'(\' AFTER \'FOR\'";
+
+    this->consume(TokenType::LEFT_PAREN, errMessage);
+
+    std::unique_ptr<Stmt> initialiser;
+
+    if (this->match({TokenType::SEMICOLON}))
+        initialiser = nullptr;
+
+    else if (this->match({TokenType::VAR}))
+        initialiser.reset(this->unsafe_varDeclaration());
+
+    else
+        initialiser.reset(this->unsafe_expressionStatement());
+
+
+    std::unique_ptr<Expr> condition = nullptr;
+
+    if (!this->check(TokenType::SEMICOLON))
+        condition.reset(this->unsafe_expression());
+
+    errMessage = "EXPECTED \';\' AFTER LOOP CONDITION";
+
+    this->consume(TokenType::SEMICOLON, errMessage);
+
+
+    std::unique_ptr<Expr> increment = nullptr;
+
+    if (!this->check(TokenType::RIGHT_PAREN))
+        increment.reset(this->unsafe_expression());
+
+    errMessage = "EXPECTED \')\' AFTER FOR CLAUSES";
+
+    this->consume(TokenType::RIGHT_PAREN, errMessage);
+
+    errMessage = "EXPECTED \'DO\' AFTER FOR HEADER";
+
+    this->consume(TokenType::DO, errMessage);
+
+
+    std::unique_ptr<Stmt> body(this->unsafe_statement()); 
+
+    if (increment.get()) {
+
+        std::vector<std::unique_ptr<Stmt>> statements;
+
+        statements.emplace_back(std::move(body));
+        statements.emplace_back(std::make_unique<Expression>(std::move(increment)));
+
+        body = std::make_unique<Block>(std::move(statements));
+    }
+
+    if (!condition.get())
+        condition = std::make_unique<Literal>(true);
+
+    body = std::make_unique<While>(std::move(condition), std::move(body));
+
+
+    if (initialiser.get()) {
+
+        std::vector<std::unique_ptr<Stmt>> statements;
+
+        statements.emplace_back(std::move(initialiser));
+        statements.emplace_back(std::move(body));
+
+        body = std::make_unique<Block>(std::move(statements));
+    }
+
+    return body.release();
+}
+
+
+Stmt* Parser::unsafe_ifStatement(void) { // free memory later
+
+    std::string errMessage = "EXPECTED \'(\' AFTER \'IF\'";
+
+    this->consume(TokenType::LEFT_PAREN, errMessage);
+
+    std::unique_ptr<Expr> condition(this->unsafe_expression());
+
+    errMessage = "EXPECTED \')\' AFTER IF CONDITION";
+
+    this->consume(TokenType::RIGHT_PAREN, errMessage);
+
+    errMessage = "EXPECTED \'THEN\' AFTER IF CONDITION";
+
+    this->consume(TokenType::THEN, errMessage);
+
+    errMessage = "EXPECTED 'DO' AFTER IF CONDITION";
+
+    this->consume(TokenType::DO, errMessage);
+
+    std::unique_ptr<Stmt> thenBranch(this->unsafe_statement());
+    std::unique_ptr<Stmt> elseBranch;
+
+    if (this->match({TokenType::ELSE})) {
+
+        errMessage = "EXPECTED \'DO\' AFTER \'ELSE\'";
+
+        this->consume(TokenType::DO, errMessage);
+
+        elseBranch.reset(this->unsafe_statement());
+    }
+
+    return new If(std::move(condition), std::move(thenBranch), std::move(elseBranch));
 }
 
 
@@ -268,6 +422,28 @@ Stmt* Parser::unsafe_varDeclaration(void) {
     this->consume(TokenType::SEMICOLON, errMessage);
 
     return new Var(name, std::move(initialiser));
+}
+
+
+Stmt* Parser::unsafe_whileStatement(void) {
+
+    std::string errMessage = "EXPECETED \'(\' AFTER \'WHILE\'";
+
+    this->consume(TokenType::LEFT_PAREN, errMessage);
+
+    std::unique_ptr<Expr> condition(this->unsafe_expression());
+
+    errMessage = "EXPECTED \')\' AFTER WHILE CONDITION";
+
+    this->consume(TokenType::RIGHT_PAREN, errMessage);
+
+    errMessage = "EXPECTED 'DO' AFTER WHILE CONDITION";
+
+    this->consume(TokenType::DO, errMessage);
+
+    std::unique_ptr<Stmt> body(this->unsafe_statement());
+
+    return new While(std::move(condition), std::move(body));
 }
 
 

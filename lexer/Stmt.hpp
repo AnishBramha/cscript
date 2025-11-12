@@ -45,6 +45,21 @@ class Expression : public Stmt {
 };
 
 
+class If : public Stmt {
+
+	public:
+
+		const std::unique_ptr<Expr> condition;
+		const std::unique_ptr<Stmt> thenBranch;
+		const std::unique_ptr<Stmt> elseBranch;
+
+		If(std::unique_ptr<Expr> condition, std::unique_ptr<Stmt> thenBranch, std::unique_ptr<Stmt> elseBranch);
+
+		object accept(Visitor& visitor) override;
+
+};
+
+
 class Print : public Stmt {
 
 	public:
@@ -66,6 +81,20 @@ class Var : public Stmt {
 		const std::unique_ptr<Expr> initialiser;
 
 		Var(const Token& name, std::unique_ptr<Expr> initialiser);
+
+		object accept(Visitor& visitor) override;
+
+};
+
+
+class While : public Stmt {
+
+	public:
+
+		const std::unique_ptr<Expr> condition;
+		const std::unique_ptr<Stmt> body;
+
+		While(std::unique_ptr<Expr> condition, std::unique_ptr<Stmt> body);
 
 		object accept(Visitor& visitor) override;
 

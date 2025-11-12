@@ -24,6 +24,8 @@ class Parser {
         Token previous(void);
 
         Expr* unsafe_assignment(void);
+        Expr* unsafe_or(void);
+        Expr* unsafe_and(void);
         Expr* unsafe_equality(void);
         Expr* unsafe_comparison(void);
         Expr* unsafe_term(void);
@@ -35,10 +37,14 @@ class Parser {
         Token consume(TokenType type, std::string& errMessage);
 
         Stmt* unsafe_statement(void);
+        Stmt* unsafe_forStatement(void);
+        Stmt* unsafe_ifStatement(void);
         Stmt* unsafe_printStatement(void);
         Stmt* unsafe_expressionStatement(void);
         Stmt* unsafe_declaration(void);
         Stmt* unsafe_varDeclaration(void);
+        Stmt* unsafe_whileStatement(void);
+
         std::vector<std::unique_ptr<Stmt>> unsafe_block(void);
 
         void synchronise(void);

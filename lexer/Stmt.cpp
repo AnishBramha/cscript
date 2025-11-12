@@ -22,6 +22,14 @@ object Expression::accept(Visitor& visitor) {
 }
 
 
+If::If(std::unique_ptr<Expr> condition, std::unique_ptr<Stmt> thenBranch, std::unique_ptr<Stmt> elseBranch) : condition(std::move(condition)), thenBranch(std::move(thenBranch)), elseBranch(std::move(elseBranch)) {}
+
+object If::accept(Visitor& visitor) {
+
+	return visitor.visitIfStmt(*this);
+}
+
+
 Print::Print(std::unique_ptr<Expr> expr) : expr(std::move(expr)) {}
 
 object Print::accept(Visitor& visitor) {
@@ -35,6 +43,14 @@ Var::Var(const Token& name, std::unique_ptr<Expr> initialiser) : name(name), ini
 object Var::accept(Visitor& visitor) {
 
 	return visitor.visitVarStmt(*this);
+}
+
+
+While::While(std::unique_ptr<Expr> condition, std::unique_ptr<Stmt> body) : condition(std::move(condition)), body(std::move(body)) {}
+
+object While::accept(Visitor& visitor) {
+
+	return visitor.visitWhileStmt(*this);
 }
 
 

@@ -16,12 +16,15 @@ class Assign;
 class Binary;
 class Grouping;
 class Literal;
+class Logical;
 class Unary;
 class Variable;
 class Block;
 class Expression;
+class If;
 class Print;
 class Var;
+class While;
 
 
 class Visitor {
@@ -32,13 +35,16 @@ class Visitor {
 		virtual object visitBinaryExpr(const Binary& expr);
 		virtual object visitGroupingExpr(const Grouping& expr);
 		virtual object visitLiteralExpr(const Literal& expr);
+		virtual object visitLogicalExpr(const Logical& expr);
 		virtual object visitUnaryExpr(const Unary& expr);
 		virtual object visitVariableExpr(const Variable& expr);
 
 		virtual object visitBlockStmt(const Block& stmt);
 		virtual object visitExpressionStmt(const Expression& stmt);
+		virtual object visitIfStmt(const If& stmt);
 		virtual object visitPrintStmt(const Print& stmt);
 		virtual object visitVarStmt(const Var& stmt);
+		virtual object visitWhileStmt(const While& stmt);
 
 
 		virtual ~Visitor() = default;
