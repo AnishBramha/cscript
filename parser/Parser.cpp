@@ -245,6 +245,9 @@ Stmt* Parser::unsafe_statement(void) { // free memory later
     if (this->match({TokenType::IOPUTF}))
         return this->unsafe_printStatement();
 
+    if (this->match({TokenType::IOPUTFN}))
+        return this->unsafe_printlnStatement();
+
     if (this->match({TokenType::WHILE}))
         return this->unsafe_whileStatement();
 
@@ -374,6 +377,18 @@ Stmt* Parser::unsafe_printStatement(void) { // free memory later
     this->consume(TokenType::SEMICOLON, errMessage);
 
     return new Print(std::move(val));
+}
+
+
+Stmt* Parser::unsafe_printlnStatement(void) { // free memory later
+
+    std::unique_ptr<Expr> val(this->unsafe_expression());
+
+    std::string errMessage = "EXPECTED \';\' AFTER VALUE";
+
+    this->consume(TokenType::SEMICOLON, errMessage);
+
+    return new Println(std::move(val));
 }
 
 

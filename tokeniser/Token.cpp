@@ -59,6 +59,7 @@ std::string Token::tokenTypeToString(const TokenType type) const {
         case TokenType::NIL:           return "NIL";
         case TokenType::OR:            return "OR";
         case TokenType::IOPUTF:        return "IOPUTF";
+        case TokenType::IOPUTFN:        return "IOPUTFN";
         case TokenType::THIS:          return "THIS";
         case TokenType::TRUE:          return "TRUE";
         case TokenType::VAR:           return "VAR";

@@ -23,6 +23,7 @@ class Block;
 class Expression;
 class If;
 class Print;
+class Println;
 class Var;
 class While;
 
@@ -43,6 +44,7 @@ class Visitor {
 		virtual object visitExpressionStmt(const Expression& stmt);
 		virtual object visitIfStmt(const If& stmt);
 		virtual object visitPrintStmt(const Print& stmt);
+		virtual object visitPrintlnStmt(const Println& stmt);
 		virtual object visitVarStmt(const Var& stmt);
 		virtual object visitWhileStmt(const While& stmt);
 

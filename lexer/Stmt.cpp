@@ -38,6 +38,14 @@ object Print::accept(Visitor& visitor) {
 }
 
 
+Println::Println(std::unique_ptr<Expr> expr) : expr(std::move(expr)) {}
+
+object Println::accept(Visitor& visitor) {
+
+	return visitor.visitPrintlnStmt(*this);
+}
+
+
 Var::Var(const Token& name, std::unique_ptr<Expr> initialiser) : name(name), initialiser(std::move(initialiser)) {}
 
 object Var::accept(Visitor& visitor) {

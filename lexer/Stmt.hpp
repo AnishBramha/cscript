@@ -73,6 +73,19 @@ class Print : public Stmt {
 };
 
 
+class Println : public Stmt {
+
+	public:
+
+		const std::unique_ptr<Expr> expr;
+
+		Println(std::unique_ptr<Expr> expr);
+
+		object accept(Visitor& visitor) override;
+
+};
+
+
 class Var : public Stmt {
 
 	public:

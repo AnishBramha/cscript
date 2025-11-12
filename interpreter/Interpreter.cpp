@@ -108,16 +108,10 @@ super::object Interpreter::visitBinaryExpr(const Binary& expr) {
             if (left.is_double() && right.is_double())
                 return left.as_double() + right.as_double();
 
-            if (left.is_double() && right.is_string())
-                return left.to_string() + right.as_string();
-
-            if (left.is_string() && right.is_double())
-                return left.as_string() + right.to_string();
-
-            if (left.is_string() && right.is_string())
+            if (left.is_string() || right.is_string())
                 return left.to_string() + right.to_string();
 
-            throw Interpreter::RuntimeError(expr.oprtor, "Interpreter: OPERANDS MUST BE NUMBERS OR STRINGS");
+            throw Interpreter::RuntimeError(expr.oprtor, "Interpreter: OPERANDS MUST BE BOTH NUMBERS OR ATLEAST ONE STRING");
 
             break;
 
@@ -247,6 +241,16 @@ super::object Interpreter::visitIfStmt(const If& stmt) {
 
 
 super::object Interpreter::visitPrintStmt(const Print& stmt) {
+
+    super::object val = this->evaluate(*stmt.expr.get());
+
+    std::cout << val.to_string();
+
+    return nullptr;
+}
+
+
+super::object Interpreter::visitPrintlnStmt(const Println& stmt) {
 
     super::object val = this->evaluate(*stmt.expr.get());
 

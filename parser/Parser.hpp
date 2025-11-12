@@ -40,6 +40,7 @@ class Parser {
         Stmt* unsafe_forStatement(void);
         Stmt* unsafe_ifStatement(void);
         Stmt* unsafe_printStatement(void);
+        Stmt* unsafe_printlnStatement(void);
         Stmt* unsafe_expressionStatement(void);
         Stmt* unsafe_declaration(void);
         Stmt* unsafe_varDeclaration(void);

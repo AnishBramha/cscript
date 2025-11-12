@@ -8,19 +8,19 @@ var c := "global c";
 
     {
         var a := "inner a";
-        ioputf a;
-        ioputf b;
-        ioputf c;
+        ioputfn a;
+        ioputfn b;
+        ioputfn c;
     }
 
-    ioputf a;
-    ioputf b;
-    ioputf c;
+    ioputfn a;
+    ioputfn b;
+    ioputfn c;
 }
 
-ioputf a;
-ioputf b;
-ioputf c;
+ioputfn a;
+ioputfn b;
+ioputfn c;
 
 
 

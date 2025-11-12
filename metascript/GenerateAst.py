@@ -234,6 +234,7 @@ if __name__ == '__main__':
         'Expression : Expr expr',
         'If         : Expr condition, Stmt thenBranch, Stmt elseBranch',
         'Print      : Expr expr',
+        'Println    : Expr expr',
         'Var        : Token name, Expr initialiser',
         'While      : Expr condition, Stmt body'
     ]

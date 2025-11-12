@@ -1,0 +1,21 @@
+// sum of n natural numbers
+
+
+var n := 10;
+var sum := 0;
+
+for (var i := 1; i <= n; i := i + 1) do {
+
+    ioputf i + " ";
+
+    sum := sum + i;
+}
+
+ioputfn "";
+
+ioputfn "Sum = " + n + " x (" + n + " + 1) / 2 = " + sum;
+
+ioputfn "Verify: " + (sum = n * (n + 1) / 2);
+
+
+
