@@ -34,7 +34,34 @@ std::vector<Stmt*> Parser::unsafe_parse(void) {
 
 Expr* Parser::unsafe_expression(void) {
 
-    return this->unsafe_equality();
+    return this->unsafe_assignment();
+}
+
+
+Expr* Parser::unsafe_assignment(void) {
+
+    std::unique_ptr<Expr> expr(this->unsafe_equality());
+
+    if (this->match({TokenType::ASSIGN})) {
+
+        Token assign = this->previous();
+        std::unique_ptr<Expr> val(this->unsafe_assignment());
+
+        auto* var = dynamic_cast<Variable*>(expr.get());
+
+        if (var) {
+
+            Token name = var->name;
+
+            return new Assign(name, std::move(val));
+        }
+
+        std::string errMessage = "INVALID ASSIGNMENT TARGET";
+
+        cscript::error(assign, errMessage);
+    }
+
+    return expr.release();
 }
 
 
@@ -177,6 +204,9 @@ Stmt* Parser::unsafe_statement(void) { // free memory later
     if (this->match({TokenType::IOPUTF}))
         return this->unsafe_printStatement();
 
+    if (this->match({TokenType::LEFT_BRACE}))
+        return new Block(this->unsafe_block());
+
     return this->unsafe_expressionStatement();
 }
 
@@ -238,6 +268,21 @@ Stmt* Parser::unsafe_varDeclaration(void) {
     this->consume(TokenType::SEMICOLON, errMessage);
 
     return new Var(name, std::move(initialiser));
+}
+
+
+std::vector<std::unique_ptr<Stmt>> Parser::unsafe_block(void) {
+
+    std::vector<std::unique_ptr<Stmt>> statements;
+    
+    while (!this->check(TokenType::RIGHT_BRACE) && !this->isAtEnd())
+        statements.emplace_back(this->unsafe_declaration());
+
+    std::string errMessage = "EXPECTED \'}\' AFTER BLOCK";
+
+    this->consume(TokenType::RIGHT_BRACE, errMessage);
+
+    return statements;
 }
 
 
@@ -321,26 +366,27 @@ void Parser::synchronise(void) {
 
         if (this->previous().type == TokenType::SEMICOLON)
             return;
+
+        switch (this->peek().type) {
+        
+            case TokenType::CLASS:
+            case TokenType::DEF:
+            case TokenType::VAR:
+            case TokenType::FOR:
+            case TokenType::IF:
+            case TokenType::WHILE:
+            case TokenType::IOPUTF:
+            case TokenType::JUMP:
+
+                return;
+
+            default:
+                break;
+
+        }
+
+        this->advance();
     }
-
-    switch (this->peek().type) {
-    
-        case TokenType::CLASS:
-        case TokenType::DEF:
-        case TokenType::VAR:
-        case TokenType::FOR:
-        case TokenType::IF:
-        case TokenType::WHILE:
-        case TokenType::IOPUTF:
-        case TokenType::JUMP:
-
-            return;
-
-        default:
-            break;
-    }
-
-    this->advance();
 
     return;
 }

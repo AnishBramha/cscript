@@ -1,6 +1,7 @@
 #pragma once
 
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include "../superclass/super.hpp"
@@ -13,12 +14,24 @@ class Environment {
 
         std::unordered_map<std::string, super::object> values;
 
+        Environment* enclosing;
+
     public:
 
-        void define(const std::string& name, super::object value);
+        Environment();
+        Environment(Environment* enclosing);
 
-        super::object get(Token name);
+        // Environment& operator=(Environment&);
+        
+        void define(const Token& name, super::object value);
+        void assign(const Token& name, super::object val);
+
+        super::object get(const Token& name);
+
+        ~Environment() = default;
 };
+
+
 
 
 

@@ -4,6 +4,7 @@
 #include "../lexer/Expr.hpp"
 #include "../tokeniser/Token.hpp"
 #include "../lexer/Stmt.hpp"
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -24,6 +25,7 @@ class Parser {
         Token previous(void);
 
         Expr* unsafe_expression(void);
+        Expr* unsafe_assignment(void);
         Expr* unsafe_equality(void);
         Expr* unsafe_comparison(void);
         Expr* unsafe_term(void);
@@ -39,6 +41,7 @@ class Parser {
         Stmt* unsafe_expressionStatement(void);
         Stmt* unsafe_declaration(void);
         Stmt* unsafe_varDeclaration(void);
+        std::vector<std::unique_ptr<Stmt>> unsafe_block(void);
 
         void synchronise(void);
 
@@ -56,7 +59,6 @@ class Parser {
 
         Parser(std::vector<Token>& tokens);
 
-        // Expr* unsafe_parse(void);
         std::vector<Stmt*> unsafe_parse(void);
 
         ~Parser() = default;

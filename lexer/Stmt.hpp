@@ -19,6 +19,19 @@ class Stmt {
 };
 
 
+class Block : public Stmt {
+
+	public:
+
+		const vector<unique_ptr<Stmt>> statements;
+
+		Block(vector<unique_ptr<Stmt>>&& statements);
+
+		object accept(Visitor& visitor) override;
+
+};
+
+
 class Expression : public Stmt {
 
 	public:

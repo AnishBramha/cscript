@@ -6,6 +6,14 @@ using namespace std;
 using super::object;
 
 
+Assign::Assign(const Token& name, std::unique_ptr<Expr> value) : name(name), value(std::move(value)) {}
+
+object Assign::accept(Visitor& visitor) {
+
+	return visitor.visitAssignExpr(*this);
+}
+
+
 Binary::Binary(std::unique_ptr<Expr> left, const Token& oprtor, std::unique_ptr<Expr> right) : left(std::move(left)), oprtor(oprtor), right(std::move(right)) {}
 
 object Binary::accept(Visitor& visitor) {

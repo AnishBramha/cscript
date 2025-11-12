@@ -8,12 +8,22 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdlib>
+#include <exception>
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <sysexits.h>
 #include <format>
 #include <vector>
+
+
+Interpreter::Interpreter() {
+
+    this->global = std::make_unique<Environment>();
+
+    this->environment = this->global.get();
+}
 
 
 super::object Interpreter::visitGroupingExpr(const Grouping& expr) {
@@ -222,7 +232,7 @@ super::object Interpreter::visitVarStmt(const Var& stmt) {
     if (stmt.initialiser.get())
         val = this->evaluate(*stmt.initialiser.get());
 
-    this->environment.define(stmt.name.lexeme, val);
+    this->environment->define(stmt.name, val);
 
     return nullptr;
 }
@@ -230,7 +240,53 @@ super::object Interpreter::visitVarStmt(const Var& stmt) {
 
 super::object Interpreter::visitVariableExpr(const Variable& expr) {
 
-    return this->environment.get(expr.name);
+    return this->environment->get(expr.name);
+}
+
+
+super::object Interpreter::visitAssignExpr(const Assign& expr) {
+
+    super::object val = this->evaluate(*expr.value.get());
+
+    this->environment->assign(expr.name, val);
+
+    return val;
+}
+
+
+super::object Interpreter::visitBlockStmt(const Block& stmt) {
+
+    this->executeBlock(stmt.statements, new Environment(this->environment));
+
+    return nullptr;
+}
+
+
+void Interpreter::executeBlock(const std::vector<std::unique_ptr<Stmt>>& statements, Environment* environment) {
+
+    Environment* previous = this->environment;
+
+    try {
+
+        this->environment = environment;
+
+        for (auto& statement : statements) 
+            this->execute(statement.get());
+    
+    } catch (std::exception&) {
+
+        this->environment = previous;
+        
+        delete environment;
+
+        throw;
+    }
+
+    this->environment = previous;
+
+    delete environment;
+
+    return;
 }
 
 
@@ -307,6 +363,7 @@ void Interpreter::checkNumberOperands(const Token& operatr, const super::object 
 
     throw Interpreter::RuntimeError(operatr, "Interpreter: OPERANDS MUST BE NUMBERS");
 }
+
 
 
 

@@ -18,6 +18,20 @@ class Expr {
 };
 
 
+class Assign : public Expr {
+
+	public:
+
+		const Token name;
+		const std::unique_ptr<Expr> value;
+
+		Assign(const Token& name, std::unique_ptr<Expr> value);
+
+		object accept(Visitor& visitor) override;
+
+};
+
+
 class Binary : public Expr {
 
 	public:

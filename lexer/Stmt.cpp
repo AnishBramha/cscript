@@ -6,6 +6,14 @@ using namespace std;
 using super::object;
 
 
+Block::Block(vector<unique_ptr<Stmt>>&& statements) : statements(std::move(statements)) {}
+
+object Block::accept(Visitor& visitor) {
+
+	return visitor.visitBlockStmt(*this);
+}
+
+
 Expression::Expression(std::unique_ptr<Expr> expr) : expr(std::move(expr)) {}
 
 object Expression::accept(Visitor& visitor) {

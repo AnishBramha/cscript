@@ -10,7 +10,7 @@ def declareType(writer, baseName: str, className: str, fieldList: str, allBaseNa
 
         type_name, name = field.rsplit(' ', 1)
 
-        if type_name in allBaseNames:
+        if type_name in allBaseNames and type_name != 'Block':
             writer.write(f'\t\tconst std::unique_ptr<{type_name}> {name};\n')
 
         else:
@@ -25,8 +25,11 @@ def declareType(writer, baseName: str, className: str, fieldList: str, allBaseNa
 
         type_name, name = field.rsplit(' ', 1)
 
-        if type_name in allBaseNames:
+        if type_name in allBaseNames and type_name != 'Block':
             paramList.append(f'std::unique_ptr<{type_name}> {name}')
+
+        elif 'vector' in type_name:
+            paramList.append(f'{type_name}&& {name}')
 
         else:
             paramList.append(f'const {type_name}& {name}')
@@ -52,8 +55,11 @@ def defineType(writer, baseName: str, className: str, fieldList: str, allBaseNam
 
         type_name, name = field.rsplit(' ', 1)
 
-        if type_name in allBaseNames:
+        if type_name in allBaseNames and type_name != 'Block':
             paramList.append(f'std::unique_ptr<{type_name}> {name}')
+
+        elif 'vector' in type_name:
+            paramList.append(f'{type_name}&& {name}')
 
         else:
             paramList.append(f'const {type_name}& {name}')
@@ -67,7 +73,7 @@ def defineType(writer, baseName: str, className: str, fieldList: str, allBaseNam
 
         type_name, name = field.rsplit(' ', 1)
 
-        if type_name in allBaseNames:
+        if type_name in allBaseNames or 'vector' in type_name:
             initList.append(f'{name}(std::move({name}))')
 
         else:
@@ -145,7 +151,11 @@ def declareVisitor(outputDir : str, baseNames : dict[str, list[str]]) -> None:
 
         writer.write('#pragma once\n\n')
         writer.write('#include "../superclass/super.hpp"\n\n')
+        writer.write('#include <vector>\n\n')
+        writer.write('#include <memory>\n\n')
         writer.write('using super::object;\n\n')
+        writer.write('using std::vector;\n\n')
+        writer.write('using std::unique_ptr;\n\n')
 
         for baseName, types in baseNames.items():
 
@@ -185,7 +195,11 @@ def defineVisitor(outputDir : str, baseNames : dict[str, list[str]]) -> None:
         writer.write('#include "./Visitor.hpp"\n')
         writer.write('#include "./Expr.hpp"\n')
         writer.write('#include "./Stmt.hpp"\n\n')
+        writer.write('#include <vector>\n\n')
+        writer.write('#include <memory>\n\n')
         writer.write('using super::object;\n\n')
+        writer.write('using std::vector;\n\n')
+        writer.write('using std::unique_ptr;\n\n')
 
         for baseName, types in baseNames.items():
 
@@ -205,6 +219,7 @@ if __name__ == '__main__':
 
     exprTypes = [
 
+        'Assign     : Token name, Expr value',
         'Binary     : Expr left, Token oprtor, Expr right',
         'Grouping   : Expr expr',
         'Literal    : object value',
@@ -214,6 +229,7 @@ if __name__ == '__main__':
 
     stmtTypes = [
 
+        'Block      : vector<unique_ptr<Stmt>> statements',
         'Expression : Expr expr',
         'Print      : Expr expr',
         'Var        : Token name, Expr initialiser'

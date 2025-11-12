@@ -1,6 +1,9 @@
 # cscript
 My implementation of Robert Nystrom's jlox interpreter, ported to C++.
 
+### About
+cscript is a high-level, dynamic, interpreted and weakly-typed scripting language.
+
 ### Requirements
 - clang (C++ 20 or later)
 - Unix-based OS (does not support Windows)

@@ -2,7 +2,20 @@
 #include "./Expr.hpp"
 #include "./Stmt.hpp"
 
+#include <vector>
+
+#include <memory>
+
 using super::object;
+
+using std::vector;
+
+using std::unique_ptr;
+
+object Visitor::visitAssignExpr(const Assign& expr) {
+
+	return object();
+}
 
 object Visitor::visitBinaryExpr(const Binary& expr) {
 
@@ -25,6 +38,11 @@ object Visitor::visitUnaryExpr(const Unary& expr) {
 }
 
 object Visitor::visitVariableExpr(const Variable& expr) {
+
+	return object();
+}
+
+object Visitor::visitBlockStmt(const Block& stmt) {
 
 	return object();
 }
