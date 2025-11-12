@@ -35,8 +35,10 @@ class Interpreter : public Visitor {
         super::object visitUnaryExpr(const Unary& expr) override;
         super::object visitBinaryExpr(const Binary& expr) override;
         super::object visitLiteralExpr(const Literal& expr) override;
+        super::object visitLogicalExpr(const Logical& expr) override;
 
         super::object visitExpressionStmt(const Expression& stmt) override;
+        super::object visitIfStmt(const If& stmt) override;
         super::object visitPrintStmt(const Print& stmt) override;
         super::object visitVarStmt(const Var& stmt) override;
         super::object visitVariableExpr(const Variable& expr) override;

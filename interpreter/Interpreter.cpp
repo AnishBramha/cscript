@@ -207,12 +207,40 @@ super::object Interpreter::visitLiteralExpr(const Literal& expr) {
 }
 
 
+super::object Interpreter::visitLogicalExpr(const Logical& expr) {
+
+    super::object left = this->evaluate(*expr.left.get());
+
+    if (expr.operatr.type == TokenType::OR) {
+
+        if (this->isTruthy(left))
+            return left;
+
+    } else if (!this->isTruthy(left))
+            return left;
+
+    return this->evaluate(*expr.right.get());
+}
+
+
 super::object Interpreter::visitExpressionStmt(const Expression& stmt) {
 
     super::object val = this->evaluate(*stmt.expr.get());
 
     if (this->repl)
         std::cout << val.to_string() << std::endl;
+
+    return nullptr;
+}
+
+
+super::object Interpreter::visitIfStmt(const If& stmt) {
+
+    if (this->isTruthy(this->evaluate(*stmt.condition.get())))
+        this->execute(stmt.thenBranch.get());
+
+    else if (stmt.elseBranch.get())
+        this->execute(stmt.elseBranch.get());
 
     return nullptr;
 }
@@ -295,14 +323,14 @@ void Interpreter::executeBlock(const std::vector<std::unique_ptr<Stmt>>& stateme
 
 bool Interpreter::isTruthy(super::object obj) {
 
-    if (obj.is_null())
+    if (obj.is_null() || obj.is_uninitialised())
         return false;
 
     if (obj.is_bool())
         return obj.as_bool();
 
     if (obj.is_double())
-        return static_cast<int>(obj.as_double());
+        return static_cast<bool>(obj.as_double());
 
     return true;
 }
