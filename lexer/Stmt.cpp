@@ -54,6 +54,14 @@ object Println::accept(Visitor& visitor) {
 }
 
 
+Return::Return(const Token& keyword, std::unique_ptr<Expr> value) : keyword(keyword), value(std::move(value)) {}
+
+object Return::accept(Visitor& visitor) {
+
+	return visitor.visitReturnStmt(*this);
+}
+
+
 Var::Var(const Token& name, std::unique_ptr<Expr> initialiser) : name(name), initialiser(std::move(initialiser)) {}
 
 object Var::accept(Visitor& visitor) {

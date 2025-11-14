@@ -44,6 +44,7 @@ class Parser {
         Stmt* unsafe_ifStatement(void);
         Stmt* unsafe_printStatement(void);
         Stmt* unsafe_printlnStatement(void);
+        Stmt* unsafe_returnStatement(void);
         Stmt* unsafe_expressionStatement(void);
         Stmt* unsafe_function(const std::string& kind);
         Stmt* unsafe_declaration(void);

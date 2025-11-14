@@ -26,6 +26,7 @@ class Function;
 class If;
 class Print;
 class Println;
+class Return;
 class Var;
 class While;
 
@@ -49,6 +50,7 @@ class Visitor {
 		virtual object visitIfStmt(const If& stmt);
 		virtual object visitPrintStmt(const Print& stmt);
 		virtual object visitPrintlnStmt(const Println& stmt);
+		virtual object visitReturnStmt(const Return& stmt);
 		virtual object visitVarStmt(const Var& stmt);
 		virtual object visitWhileStmt(const While& stmt);
 

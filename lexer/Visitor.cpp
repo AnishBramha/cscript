@@ -82,6 +82,11 @@ object Visitor::visitPrintlnStmt(const Println& stmt) {
 	return object();
 }
 
+object Visitor::visitReturnStmt(const Return& stmt) {
+
+	return object();
+}
+
 object Visitor::visitVarStmt(const Var& stmt) {
 
 	return object();

@@ -56,6 +56,7 @@ class Function : public Stmt {
 		Function(const Token& name, vector<Token>&& params, vector<unique_ptr<Stmt>>&& body);
 
 		object accept(Visitor& visitor) override;
+
 };
 
 
@@ -94,6 +95,20 @@ class Println : public Stmt {
 		const std::unique_ptr<Expr> expr;
 
 		Println(std::unique_ptr<Expr> expr);
+
+		object accept(Visitor& visitor) override;
+
+};
+
+
+class Return : public Stmt {
+
+	public:
+
+		const Token keyword;
+		const std::unique_ptr<Expr> value;
+
+		Return(const Token& keyword, std::unique_ptr<Expr> value);
 
 		object accept(Visitor& visitor) override;
 

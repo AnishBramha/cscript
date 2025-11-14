@@ -15,7 +15,7 @@ class Interpreter : public Visitor {
 
     private:
 
-        Environment* environment;
+        std::shared_ptr<Environment> environment;
         bool repl = false;
 
         super::object evaluate(Expr& expr);
@@ -27,7 +27,7 @@ class Interpreter : public Visitor {
 
     public:
 
-        std::unique_ptr<Environment> global;
+        std::shared_ptr<Environment> global;
 
         Interpreter();
 
@@ -45,12 +45,13 @@ class Interpreter : public Visitor {
         super::object visitIfStmt(const If& stmt) override;
         super::object visitPrintStmt(const Print& stmt) override;
         super::object visitPrintlnStmt(const Println& stmt) override;
+        super::object visitReturnStmt(const Return& stmt) override;
         super::object visitVarStmt(const Var& stmt) override;
         super::object visitWhileStmt(const While& stmt) override;
         super::object visitBlockStmt(const Block& stmt) override;
 
         void interpret(std::vector<Stmt*>& statements, bool repl);
-        void executeBlock(const std::vector<std::unique_ptr<Stmt>>& statements, Environment* environment);
+        void executeBlock(const std::vector<std::unique_ptr<Stmt>>& statements, std::shared_ptr<Environment> environment);
 
         class RuntimeError : public std::runtime_error {
 

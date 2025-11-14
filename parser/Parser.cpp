@@ -273,6 +273,9 @@ Stmt* Parser::unsafe_statement(void) { // free memory later
     if (this->match({TokenType::IOPUTFN}))
         return this->unsafe_printlnStatement();
 
+    if (this->match({TokenType::JUMP}))
+        return this->unsafe_returnStatement();
+
     if (this->match({TokenType::WHILE}))
         return this->unsafe_whileStatement();
 
@@ -285,8 +288,8 @@ Stmt* Parser::unsafe_statement(void) { // free memory later
 
 Stmt* Parser::unsafe_forStatement(void) {
 
-    std::string errMessage = "EXPECTED \'(\' AFTER \'FOR\'";
-    this->consume(TokenType::LEFT_PAREN, errMessage);
+    // std::string errMessage = "EXPECTED \'(\' AFTER \'FOR\'";
+    // this->consume(TokenType::LEFT_PAREN, errMessage);
 
     std::unique_ptr<Stmt> initialiser;
 
@@ -305,7 +308,7 @@ Stmt* Parser::unsafe_forStatement(void) {
     if (!this->check(TokenType::SEMICOLON))
         condition.reset(this->unsafe_expression());
 
-    errMessage = "EXPECTED \';\' AFTER LOOP CONDITION";
+    std::string errMessage = "EXPECTED \';\' AFTER LOOP CONDITION";
     this->consume(TokenType::SEMICOLON, errMessage);
 
 
@@ -314,8 +317,8 @@ Stmt* Parser::unsafe_forStatement(void) {
     if (!this->check(TokenType::RIGHT_PAREN))
         increment.reset(this->unsafe_expression());
 
-    errMessage = "EXPECTED \')\' AFTER FOR CLAUSES";
-    this->consume(TokenType::RIGHT_PAREN, errMessage);
+    // errMessage = "EXPECTED \')\' AFTER FOR CLAUSES";
+    // this->consume(TokenType::RIGHT_PAREN, errMessage);
 
     errMessage = "EXPECTED \'DO\' AFTER FOR HEADER";
     this->consume(TokenType::DO, errMessage);
@@ -355,18 +358,18 @@ Stmt* Parser::unsafe_forStatement(void) {
 
 Stmt* Parser::unsafe_ifStatement(void) { // free memory later
 
-    std::string errMessage = "EXPECTED \'(\' AFTER \'IF\'";
-    this->consume(TokenType::LEFT_PAREN, errMessage);
+    // std::string errMessage = "EXPECTED \'(\' AFTER \'IF\'";
+    // this->consume(TokenType::LEFT_PAREN, errMessage);
 
     std::unique_ptr<Expr> condition(this->unsafe_expression());
-    errMessage = "EXPECTED \')\' AFTER IF CONDITION";
 
-    this->consume(TokenType::RIGHT_PAREN, errMessage);
-    errMessage = "EXPECTED \'THEN\' AFTER IF CONDITION";
+    // errMessage = "EXPECTED \')\' AFTER IF CONDITION";
+    // this->consume(TokenType::RIGHT_PAREN, errMessage);
 
+    std::string errMessage = "EXPECTED \'THEN\' AFTER IF CONDITION";
     this->consume(TokenType::THEN, errMessage);
-    errMessage = "EXPECTED 'DO' AFTER IF CONDITION";
 
+    errMessage = "EXPECTED 'DO' AFTER IF CONDITION";
     this->consume(TokenType::DO, errMessage);
 
     std::unique_ptr<Stmt> thenBranch(this->unsafe_statement());
@@ -403,6 +406,21 @@ Stmt* Parser::unsafe_printlnStatement(void) { // free memory later
     this->consume(TokenType::SEMICOLON, errMessage);
 
     return new Println(std::move(val));
+}
+
+
+Stmt* Parser::unsafe_returnStatement(void) { // free memory later
+
+    Token keyword = this->previous();
+    std::unique_ptr<Expr> val;
+
+    if (!this->check(TokenType::SEMICOLON))
+        val.reset(this->unsafe_expression());
+
+    std::string errMessage = "EXPECTED \';\' AFTER JUMP VALUE";
+    this->consume(TokenType::SEMICOLON, errMessage);
+
+    return new Return(keyword, std::move(val));
 }
 
 
@@ -501,15 +519,15 @@ Stmt* Parser::unsafe_varDeclaration(void) {
 
 Stmt* Parser::unsafe_whileStatement(void) {
 
-    std::string errMessage = "EXPECETED \'(\' AFTER \'WHILE\'";
-    this->consume(TokenType::LEFT_PAREN, errMessage);
+    // std::string errMessage = "EXPECETED \'(\' AFTER \'WHILE\'";
+    // this->consume(TokenType::LEFT_PAREN, errMessage);
 
     std::unique_ptr<Expr> condition(this->unsafe_expression());
 
-    errMessage = "EXPECTED \')\' AFTER WHILE CONDITION";
-    this->consume(TokenType::RIGHT_PAREN, errMessage);
+    // errMessage = "EXPECTED \')\' AFTER WHILE CONDITION";
+    // this->consume(TokenType::RIGHT_PAREN, errMessage);
 
-    errMessage = "EXPECTED 'DO' AFTER WHILE CONDITION";
+    std::string errMessage = "EXPECTED 'DO' AFTER WHILE CONDITION";
     this->consume(TokenType::DO, errMessage);
 
     std::unique_ptr<Stmt> body(this->unsafe_statement());

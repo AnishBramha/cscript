@@ -58,7 +58,7 @@ namespace {
 Interpreter::Interpreter() {
 
     this->global = std::make_unique<Environment>();
-    this->environment = this->global.get();
+    this->environment = this->global;
 
     std::string lexeme = "clock";
     super::object nil(nullptr);
@@ -301,9 +301,9 @@ super::object Interpreter::visitExpressionStmt(const Expression& stmt) {
 
 super::object Interpreter::visitFunctionStmt(const Function& stmt) {
 
-    std::shared_ptr<Callable> function = std::make_shared<CallableFunction>(&stmt);
+    std::shared_ptr<Callable> function = std::make_shared<CallableFunction>(&stmt, this->environment);
 
-    environment->define(stmt.name, function);
+    environment->define(stmt.name, super::object(function));
 
     return nullptr;
 }
@@ -338,6 +338,17 @@ super::object Interpreter::visitPrintlnStmt(const Println& stmt) {
     std::cout << val.to_string() << std::endl;
 
     return nullptr;
+}
+
+
+super::object Interpreter::visitReturnStmt(const Return& stmt) {
+
+    super::object val = nullptr;
+
+    if (stmt.value.get())
+        val = this->evaluate(*stmt.value.get());
+
+    throw CallableFunction::Return(val);
 }
 
 
@@ -381,15 +392,17 @@ super::object Interpreter::visitAssignExpr(const Assign& expr) {
 
 super::object Interpreter::visitBlockStmt(const Block& stmt) {
 
-    this->executeBlock(stmt.statements, new Environment(this->environment));
+    std::shared_ptr<Environment> environment = std::make_shared<Environment>(this->environment.get());
+
+    this->executeBlock(stmt.statements, environment);
 
     return nullptr;
 }
 
 
-void Interpreter::executeBlock(const std::vector<std::unique_ptr<Stmt>>& statements, Environment* environment) {
+void Interpreter::executeBlock(const std::vector<std::unique_ptr<Stmt>>& statements, std::shared_ptr<Environment> environment) {
 
-    Environment* previous = this->environment;
+    std::shared_ptr<Environment> previous = this->environment;
 
     try {
 
@@ -402,14 +415,10 @@ void Interpreter::executeBlock(const std::vector<std::unique_ptr<Stmt>>& stateme
 
         this->environment = previous;
         
-        delete environment;
-
         throw;
     }
 
     this->environment = previous;
-
-    delete environment;
 
     return;
 }

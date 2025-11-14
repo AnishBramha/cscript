@@ -1,6 +1,6 @@
 var i := 0;
 
-while (i < 5) do {
+while i < 5 do {
     
     ioputf i + " ";
     i := i + 1;

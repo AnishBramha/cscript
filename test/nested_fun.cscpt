@@ -1,0 +1,24 @@
+def makeCounter() as do {
+
+    var i := 0;
+
+    def count() as do {
+
+        i := i + 1;
+        ioputfn i;
+    }
+
+    jump count;
+}
+
+
+var counter := makeCounter();
+counter();
+counter();
+
+
+
+
+
+
+

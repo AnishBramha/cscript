@@ -4,7 +4,7 @@
 var n := 10;
 var sum := 0;
 
-for (var i := 1; i <= n; i := i + 1) do {
+for var i := 1; i <= n; i := i + 1 do {
 
     ioputf i + " ";
 

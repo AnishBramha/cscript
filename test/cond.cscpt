@@ -1,4 +1,4 @@
-if (1 /= 2) then do {
+if 1 /= 2 then do {
     ioputfn "yay";
 } else do {
     ioputfn "nay";

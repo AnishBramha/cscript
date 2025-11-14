@@ -2,9 +2,9 @@ ioputfn "This is my first test file";
 ioputfn 3*4+7-2;
 
 
-for (var i := 1; i < 5; i := i + 1) do {
+for var i := 1; i < 5; i := i + 1 do {
 
-    for (var j := 1; j < i + 1; j := j + 1) do {
+    for var j := 1; j < i + 1; j := j + 1 do {
 
         ioputf "*";
     }
@@ -13,7 +13,7 @@ for (var i := 1; i < 5; i := i + 1) do {
 }
 
 
-if (1 /= 2) then do {
+if 1 /= 2 then do {
 
     ioputfn true;
 }
