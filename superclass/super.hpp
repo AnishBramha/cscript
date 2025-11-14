@@ -3,7 +3,10 @@
 #include <cstddef>
 #include <variant>
 #include <string>
+#include <memory>
 
+
+class Callable;
 
 namespace super {
 
@@ -30,7 +33,8 @@ namespace super {
                 double,
                 std::string,
                 std::nullptr_t,
-                uninitialised_t
+                uninitialised_t,
+                std::shared_ptr<Callable>
             >;
 
             var obj;
@@ -44,6 +48,7 @@ namespace super {
             object(const std::string&);
             object(const char*);
             object(uninitialised_t);
+            object(std::shared_ptr<Callable>);
 
             object(const object&) = default;
             object(object&&) = default;
@@ -57,10 +62,12 @@ namespace super {
             bool is_bool(void) const;
             bool is_double(void) const;
             bool is_string(void) const;
+            bool is_callable(void) const;
 
             bool as_bool(void) const;
             double as_double(void) const;
             std::string as_string(void) const;
+            std::shared_ptr<Callable> as_callable(void) const;
 
             std::string to_string(void) const;
 

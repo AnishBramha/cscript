@@ -22,6 +22,11 @@ object Visitor::visitBinaryExpr(const Binary& expr) {
 	return object();
 }
 
+object Visitor::visitCallExpr(const Call& expr) {
+
+	return object();
+}
+
 object Visitor::visitGroupingExpr(const Grouping& expr) {
 
 	return object();
@@ -53,6 +58,11 @@ object Visitor::visitBlockStmt(const Block& stmt) {
 }
 
 object Visitor::visitExpressionStmt(const Expression& stmt) {
+
+	return object();
+}
+
+object Visitor::visitFunctionStmt(const Function& stmt) {
 
 	return object();
 }

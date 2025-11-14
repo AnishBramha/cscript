@@ -22,6 +22,14 @@ object Binary::accept(Visitor& visitor) {
 }
 
 
+Call::Call(std::unique_ptr<Expr> callee, const Token& paren, vector<unique_ptr<Expr>>&& args) : callee(std::move(callee)), paren(paren), args(std::move(args)) {}
+
+object Call::accept(Visitor& visitor) {
+
+	return visitor.visitCallExpr(*this);
+}
+
+
 Grouping::Grouping(std::unique_ptr<Expr> expr) : expr(std::move(expr)) {}
 
 object Grouping::accept(Visitor& visitor) {

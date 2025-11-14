@@ -45,6 +45,20 @@ class Expression : public Stmt {
 };
 
 
+class Function : public Stmt {
+
+	public:
+
+		const Token name;
+		const vector<Token> params;
+		const vector<unique_ptr<Stmt>> body;
+
+		Function(const Token& name, vector<Token>&& params, vector<unique_ptr<Stmt>>&& body);
+
+		object accept(Visitor& visitor) override;
+};
+
+
 class If : public Stmt {
 
 	public:

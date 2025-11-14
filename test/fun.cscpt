@@ -1,0 +1,27 @@
+def sayHi(first, last) as do {
+
+    ioputfn "Hi, " + first + " " + last + "!";
+}
+
+sayHi("Functions", "Demo");
+
+
+def sum(a, b) as do {
+
+    ioputfn a + b;
+}
+
+
+def main() as do {
+
+    sayHi("Anish", "Bramha");
+    sum(3*4, 4^4);
+}
+
+main();
+
+
+
+
+
+

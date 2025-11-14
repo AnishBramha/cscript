@@ -47,6 +47,21 @@ class Binary : public Expr {
 };
 
 
+class Call : public Expr {
+
+	public:
+
+		const std::unique_ptr<Expr> callee;
+		const Token paren;
+		const vector<unique_ptr<Expr>> args;
+
+		Call(std::unique_ptr<Expr> callee, const Token& paren, vector<unique_ptr<Expr>>&& args);
+
+		object accept(Visitor& visitor) override;
+
+};
+
+
 class Grouping : public Expr {
 
 	public:

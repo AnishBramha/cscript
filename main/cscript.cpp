@@ -29,7 +29,6 @@ int main(int argc, char** argv) {
     if (argc > 2) {
 
         std::cerr << "USAGE: CSCRIPT" << std::endl;
-
         std::exit(EX_USAGE);
 
     } else if (argc == 2) {
@@ -87,9 +86,7 @@ void cscript::runPrompt(void) {
     std::string line;
 
     std::cout << std::endl << "cscript REPL - Type in expressions and/or statements" << std::endl << std::endl;
-
     std::cout << "Type 'quit' or 'exit' or <C-d> to close REPL" << std::endl << std::endl;
-
     std::cout << "Type 'clear' to clear the screen" << std::endl << std::endl;
 
     std::cout << "<<< ";
@@ -106,13 +103,9 @@ void cscript::runPrompt(void) {
         if (line == "clear") {
 
             std::cout << CLEAR_SCREEN << CURSOR_JUMP_TOPLEFT << std::endl;
-
             std::cout << std::endl << "cscript REPL - Type in expressions and/or statements" << std::endl << std::endl;
-
             std::cout << "Type 'quit' or 'exit' or <C-d> to close REPL" << std::endl << std::endl;
-
             std::cout << "Type 'clear' to clear the screen" << std::endl << std::endl;
-
             std::cout << std::endl << "<<< ";
 
             continue;
@@ -121,7 +114,6 @@ void cscript::runPrompt(void) {
         std::cout << ">>> ";
     
         cscript::run(line, true);
-
         cscript::hadError = false;
 
         std::cout << std::endl << "<<< ";
@@ -138,14 +130,12 @@ void cscript::run(std::string& source, bool repl) {
     Scanner scanner(source);
     
     std::vector<Token*> tokens = scanner.scanTokens();
-
     std::vector<Token> tokens_list;
 
     for (auto& token : tokens)
         tokens_list.emplace_back(*token);
 
     Parser parser(tokens_list);
-
     std::vector<Stmt*> statements = parser.unsafe_parse();
 
     if (cscript::hadError) {
@@ -155,7 +145,6 @@ void cscript::run(std::string& source, bool repl) {
             try {
 
                 cscript::hadError = false;
-
                 Parser parser(tokens_list);
 
                 Expr* expr = parser.unsafe_expression();
@@ -163,7 +152,6 @@ void cscript::run(std::string& source, bool repl) {
                 if (!cscript::hadError && parser.isAtEnd()) {
 
                     std::unique_ptr<Expr> _expr(expr);
-
                     Stmt* print = new Print(std::move(_expr));
 
                     std::vector<Stmt*> replStatements;
@@ -206,7 +194,6 @@ void cscript::run(std::string& source, bool repl) {
 void cscript::error(int line, std::string& message) {
 
     std::string column = "";
-
     cscript::report(line, column, message);
 
     return;
@@ -233,13 +220,11 @@ void cscript::error(Token token, std::string& errMessage) {
     if (token.type == TokenType::END_OF_FILE) {
 
         std::string where = " at end"; 
-
         cscript::report(token.line, where, errMessage);
     
     } else {
 
         std::string where = " at \'" + token.lexeme + "\'";
-
         cscript::report(token.line, where, errMessage);
     }
 
@@ -249,7 +234,7 @@ void cscript::error(Token token, std::string& errMessage) {
 
 void cscript::runtimeError(const Interpreter::RuntimeError& e) {
 
-    std::cerr << e.what() << std::endl;
+    std::cerr << e.what();
     std::cerr << "[line " << e.token.line << "]" << std::endl;
 
     cscript::hadRuntimeError = true;

@@ -32,9 +32,12 @@ class Parser {
         Expr* unsafe_factor(void);
         Expr* unsafe_power(void);
         Expr* unsafe_unary(void);
+        Expr* unsafe_call(void);
         Expr* unsafe_primary(void);
 
         Token consume(TokenType type, std::string& errMessage);
+        
+        Expr* unsafe_finishCall(std::unique_ptr<Expr> callee);
 
         Stmt* unsafe_statement(void);
         Stmt* unsafe_forStatement(void);
@@ -42,6 +45,7 @@ class Parser {
         Stmt* unsafe_printStatement(void);
         Stmt* unsafe_printlnStatement(void);
         Stmt* unsafe_expressionStatement(void);
+        Stmt* unsafe_function(const std::string& kind);
         Stmt* unsafe_declaration(void);
         Stmt* unsafe_varDeclaration(void);
         Stmt* unsafe_whileStatement(void);

@@ -1,9 +1,11 @@
-#include "super.hpp"
+#include "./super.hpp"
 #include <cstddef>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <variant>
 #include <format>
+#include "../funcs/Callable.hpp"
 
 
 super::object::object() : obj(nullptr) {}
@@ -19,6 +21,8 @@ super::object::object(const std::string& obj) : obj(obj) {}
 super::object::object(const char* obj) : obj(std::string(obj)) {}
 
 super::object::object(super::uninitialised_t) : obj(super::uninitialised_t{}) {}
+
+super::object::object(std::shared_ptr<Callable> callable) : obj(std::move(callable)) {}
 
 
 bool super::object::is_uninitialised(void) const {
@@ -44,6 +48,11 @@ bool super::object::is_double(void) const {
 bool super::object::is_string(void) const {
 
     return std::holds_alternative<std::string>(this->obj);
+}
+
+bool super::object::is_callable(void) const {
+
+    return std::holds_alternative<std::shared_ptr<Callable>>(this->obj);
 }
 
 
@@ -96,6 +105,21 @@ std::string super::object::as_string(void) const {
     }
 
     return "";
+}
+
+std::shared_ptr<Callable> super::object::as_callable(void) const {
+
+    try {
+
+        if (!this->is_callable())
+            throw std::bad_variant_access();
+
+        return *std::get_if<std::shared_ptr<Callable>>(&this->obj);
+
+    } catch (const std::bad_variant_access&) {
+
+        std::cerr << "SUPER ERRPR: NOT CALLABLE" << std::endl;
+    }
 }
 
 

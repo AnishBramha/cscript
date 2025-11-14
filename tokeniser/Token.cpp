@@ -47,6 +47,7 @@ std::string Token::tokenTypeToString(const TokenType type) const {
 
         // Keywords
         case TokenType::AND:           return "AND";
+        case TokenType::AS:            return "AS";
         case TokenType::SUPER:         return "BASE";
         case TokenType::CLASS:         return "CLASS";
         case TokenType::DO:            return "DO";

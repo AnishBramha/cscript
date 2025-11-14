@@ -58,7 +58,6 @@ Expr* Parser::unsafe_assignment(void) {
         }
 
         std::string errMessage = "INVALID ASSIGNMENT TARGET";
-
         cscript::error(assign, errMessage);
     }
 
@@ -73,9 +72,7 @@ Expr* Parser::unsafe_or(void) {
     while (this->match({TokenType::OR})) {
 
         Token operatr = this->previous();
-
         std::unique_ptr<Expr> right(this->unsafe_and());
-
         expr = std::make_unique<Logical>(std::move(expr), operatr, std::move(right));
     }
 
@@ -90,9 +87,7 @@ Expr* Parser::unsafe_and(void) {
     while (this->match({TokenType::AND})) {
 
         Token operatr = this->previous();
-
         std::unique_ptr<Expr> right(this->unsafe_equality());
-
         expr = std::make_unique<Logical>(std::move(expr), operatr, std::move(right));
     }
 
@@ -107,9 +102,7 @@ Expr* Parser::unsafe_equality(void) { // free memory later
     while (this->match({TokenType::NOT_EQUAL, TokenType::EQUAL})) {
 
         Token operatr = this->previous();
-
         std::unique_ptr<Expr> right(this->unsafe_comparison());
-
         expr = std::make_unique<Binary>(std::move(expr), operatr, std::move(right));
     }
 
@@ -124,9 +117,7 @@ Expr* Parser::unsafe_comparison(void) { // free memory later
     while (this->match({TokenType::GREATER, TokenType::GREATER_EQUAL, TokenType::LESS, TokenType::LESS_EQUAL})) {
 
         Token operatr = this->previous();
-
         std::unique_ptr<Expr> right(this->unsafe_term());
-
         expr = std::make_unique<Binary>(std::move(expr), operatr, std::move(right));
     }
 
@@ -141,9 +132,7 @@ Expr* Parser::unsafe_term(void) { // free memory later
     while (this->match({TokenType::MINUS, TokenType::PLUS})) {
 
         Token operatr = this->previous();
-
         std::unique_ptr<Expr> right(this->unsafe_factor());
-
         expr = std::make_unique<Binary>(std::move(expr), operatr, std::move(right));
     }
 
@@ -158,9 +147,7 @@ Expr* Parser::unsafe_factor(void) { // free memory later
     while (this->match({TokenType::SLASH, TokenType::STAR, TokenType::MOD})) {
 
         Token operatr = this->previous();
-        
         std::unique_ptr<Expr> right(this->unsafe_power());
-
         expr = std::make_unique<Binary>(std::move(expr), operatr, std::move(right));
     }
 
@@ -175,9 +162,7 @@ Expr* Parser::unsafe_power(void) { // free memory later
     while (this->match({TokenType::POWER})) {
 
         Token operatr = this->previous();
-
         std::unique_ptr<Expr> right(this->unsafe_power());
-
         expr = std::make_unique<Binary>(std::move(expr), operatr, std::move(right));
     }
 
@@ -190,13 +175,54 @@ Expr* Parser::unsafe_unary(void) { // free memory later
     if (this->match({TokenType::BANG, TokenType::MINUS})) {
 
         Token operatr = this->previous();
-
         std::unique_ptr<Expr> right(this->unsafe_unary());
-
         return new Unary(operatr, std::move(right));
     }
 
-    return this->unsafe_primary();
+    return this->unsafe_call();
+}
+
+
+Expr* Parser::unsafe_call(void) { // free memory later
+    
+    std::unique_ptr<Expr> expr(this->unsafe_primary());
+
+    for (;;) {
+
+        if (this->match({TokenType::LEFT_PAREN}))
+            expr.reset(this->unsafe_finishCall(std::move(expr)));
+
+        else
+            break;
+    }
+
+    return expr.release();
+}
+
+
+Expr* Parser::unsafe_finishCall(std::unique_ptr<Expr> callee) {
+
+    std::vector<std::unique_ptr<Expr>> args;
+
+    if (!this->check(TokenType::RIGHT_PAREN)) {
+
+        do {
+
+            if (args.size() >= 255) {
+
+                std::string errMessage = "CANNOT HAVE MORE THAN 255 FUNCTION ARGUMENTS";
+                cscript::error(this->peek(), errMessage);
+            }
+
+            args.emplace_back(this->unsafe_expression());
+
+        } while (this->match({TokenType::COMMA}));
+    }
+
+    std::string errMessage = "EXPECTED \')\' AFTER FUNCTION ARGUMENTS";
+    Token paren = this->consume(TokenType::RIGHT_PAREN, errMessage);
+
+    return new Call(std::move(callee), paren, std::move(args));
 }
 
 
@@ -222,7 +248,6 @@ Expr* Parser::unsafe_primary(void) { // free memory later
         std::unique_ptr<Expr> expr(this->unsafe_expression());
 
         std::string errMessage = "EXPECTED \')\' AFTER EXPRESSION";
-
         this->consume(TokenType::RIGHT_PAREN, errMessage);
 
         return new Grouping(std::move(expr));
@@ -261,7 +286,6 @@ Stmt* Parser::unsafe_statement(void) { // free memory later
 Stmt* Parser::unsafe_forStatement(void) {
 
     std::string errMessage = "EXPECTED \'(\' AFTER \'FOR\'";
-
     this->consume(TokenType::LEFT_PAREN, errMessage);
 
     std::unique_ptr<Stmt> initialiser;
@@ -282,7 +306,6 @@ Stmt* Parser::unsafe_forStatement(void) {
         condition.reset(this->unsafe_expression());
 
     errMessage = "EXPECTED \';\' AFTER LOOP CONDITION";
-
     this->consume(TokenType::SEMICOLON, errMessage);
 
 
@@ -292,11 +315,9 @@ Stmt* Parser::unsafe_forStatement(void) {
         increment.reset(this->unsafe_expression());
 
     errMessage = "EXPECTED \')\' AFTER FOR CLAUSES";
-
     this->consume(TokenType::RIGHT_PAREN, errMessage);
 
     errMessage = "EXPECTED \'DO\' AFTER FOR HEADER";
-
     this->consume(TokenType::DO, errMessage);
 
 
@@ -335,19 +356,15 @@ Stmt* Parser::unsafe_forStatement(void) {
 Stmt* Parser::unsafe_ifStatement(void) { // free memory later
 
     std::string errMessage = "EXPECTED \'(\' AFTER \'IF\'";
-
     this->consume(TokenType::LEFT_PAREN, errMessage);
 
     std::unique_ptr<Expr> condition(this->unsafe_expression());
-
     errMessage = "EXPECTED \')\' AFTER IF CONDITION";
 
     this->consume(TokenType::RIGHT_PAREN, errMessage);
-
     errMessage = "EXPECTED \'THEN\' AFTER IF CONDITION";
 
     this->consume(TokenType::THEN, errMessage);
-
     errMessage = "EXPECTED 'DO' AFTER IF CONDITION";
 
     this->consume(TokenType::DO, errMessage);
@@ -358,7 +375,6 @@ Stmt* Parser::unsafe_ifStatement(void) { // free memory later
     if (this->match({TokenType::ELSE})) {
 
         errMessage = "EXPECTED \'DO\' AFTER \'ELSE\'";
-
         this->consume(TokenType::DO, errMessage);
 
         elseBranch.reset(this->unsafe_statement());
@@ -373,7 +389,6 @@ Stmt* Parser::unsafe_printStatement(void) { // free memory later
     std::unique_ptr<Expr> val(this->unsafe_expression());
 
     std::string errMessage = "EXPECTED \';\' AFTER VALUE";
-
     this->consume(TokenType::SEMICOLON, errMessage);
 
     return new Print(std::move(val));
@@ -385,7 +400,6 @@ Stmt* Parser::unsafe_printlnStatement(void) { // free memory later
     std::unique_ptr<Expr> val(this->unsafe_expression());
 
     std::string errMessage = "EXPECTED \';\' AFTER VALUE";
-
     this->consume(TokenType::SEMICOLON, errMessage);
 
     return new Println(std::move(val));
@@ -397,7 +411,6 @@ Stmt* Parser::unsafe_expressionStatement(void) { // free memory later
     std::unique_ptr<Expr> expr(this->unsafe_expression());
 
     std::string errMessage = "EXPECTED \';\' AFTER EXPRESSION";
-
     this->consume(TokenType::SEMICOLON, errMessage);
 
     return new Expression(std::move(expr));
@@ -406,6 +419,9 @@ Stmt* Parser::unsafe_expressionStatement(void) { // free memory later
 Stmt* Parser::unsafe_declaration(void) { // free memory later
 
     try {
+
+        if (this->match({TokenType::DEF}))
+            return this->unsafe_function("function");
 
         if (this->match({TokenType::VAR}))
             return this->unsafe_varDeclaration();
@@ -421,10 +437,54 @@ Stmt* Parser::unsafe_declaration(void) { // free memory later
 }
 
 
+Stmt* Parser::unsafe_function(const std::string& kind) {
+
+    std::string errMessage = "EXPECTED " + kind + " NAME";
+    Token name = this->consume(TokenType::IDENTIFIER, errMessage);
+
+    errMessage = "EXPECTED \'(\' AFTER FUNCTION NAME";
+    this->consume(TokenType::LEFT_PAREN, errMessage);
+
+    std::vector<Token> params;
+
+    if (!this->check(TokenType::RIGHT_PAREN)) {
+
+        do {
+
+            if (params.size() >= 255) {
+
+                std::string errMessage = "CANNOT PASS MORE THAN 255 PARAMETERS"; 
+                cscript::error(this->peek(), errMessage);
+            }
+
+            std::string errMessage = "EXPECTED PARAMETER NAME";
+
+            params.emplace_back(this->consume(TokenType::IDENTIFIER, errMessage));
+
+        } while (this->match({TokenType::COMMA}));
+    }
+
+    errMessage = "EXPECTED \')\' AFTER PARAMETERS";
+    this->consume(TokenType::RIGHT_PAREN, errMessage);
+
+    errMessage = "EXPECTED \'AS\' FUNCTION HEADER TO BODY LINKER";
+    this->consume(TokenType::AS, errMessage);
+    
+    errMessage = "EXPECTED \'DO\' BLOCK INITIALISER BEFORE" + kind + "BODY";
+    this->consume(TokenType::DO, errMessage);
+
+    errMessage = "EXPECTED \'{\' BEFORE " + kind + " BODY";
+    this->consume(TokenType::LEFT_BRACE, errMessage);
+
+    std::vector<std::unique_ptr<Stmt>> body = this->unsafe_block();
+
+    return new Function(name, std::move(params), std::move(body));
+}
+
+
 Stmt* Parser::unsafe_varDeclaration(void) {
 
     std::string errMessage = "EXPECTED VARIABLE NAME";
-
     Token name = this->consume(TokenType::IDENTIFIER, errMessage);
 
     std::unique_ptr<Expr> initialiser;
@@ -433,7 +493,6 @@ Stmt* Parser::unsafe_varDeclaration(void) {
         initialiser.reset(this->unsafe_expression());
 
     errMessage = "EXPECTED \';\' AFTER VARIABLE DECLARATION";
-
     this->consume(TokenType::SEMICOLON, errMessage);
 
     return new Var(name, std::move(initialiser));
@@ -443,17 +502,14 @@ Stmt* Parser::unsafe_varDeclaration(void) {
 Stmt* Parser::unsafe_whileStatement(void) {
 
     std::string errMessage = "EXPECETED \'(\' AFTER \'WHILE\'";
-
     this->consume(TokenType::LEFT_PAREN, errMessage);
 
     std::unique_ptr<Expr> condition(this->unsafe_expression());
 
     errMessage = "EXPECTED \')\' AFTER WHILE CONDITION";
-
     this->consume(TokenType::RIGHT_PAREN, errMessage);
 
     errMessage = "EXPECTED 'DO' AFTER WHILE CONDITION";
-
     this->consume(TokenType::DO, errMessage);
 
     std::unique_ptr<Stmt> body(this->unsafe_statement());

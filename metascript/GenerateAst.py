@@ -221,6 +221,7 @@ if __name__ == '__main__':
 
         'Assign     : Token name, Expr value',
         'Binary     : Expr left, Token oprtor, Expr right',
+        'Call       : Expr callee, Token paren, vector<unique_ptr<Expr>> args',
         'Grouping   : Expr expr',
         'Literal    : object value',
         'Logical    : Expr left, Token operatr, Expr right',
@@ -232,6 +233,7 @@ if __name__ == '__main__':
 
         'Block      : vector<unique_ptr<Stmt>> statements',
         'Expression : Expr expr',
+        'Function   : Token name, vector<Token> params, vector<unique_ptr<Stmt>> body',
         'If         : Expr condition, Stmt thenBranch, Stmt elseBranch',
         'Print      : Expr expr',
         'Println    : Expr expr',

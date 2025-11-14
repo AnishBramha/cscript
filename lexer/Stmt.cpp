@@ -22,6 +22,14 @@ object Expression::accept(Visitor& visitor) {
 }
 
 
+Function::Function(const Token& name, vector<Token>&& params, vector<unique_ptr<Stmt>>&& body) : name(name), params(std::move(params)), body(std::move(body)) {}
+
+object Function::accept(Visitor& visitor) {
+
+	return visitor.visitFunctionStmt(*this);
+}
+
+
 If::If(std::unique_ptr<Expr> condition, std::unique_ptr<Stmt> thenBranch, std::unique_ptr<Stmt> elseBranch) : condition(std::move(condition)), thenBranch(std::move(thenBranch)), elseBranch(std::move(elseBranch)) {}
 
 object If::accept(Visitor& visitor) {

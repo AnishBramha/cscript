@@ -1,3 +1,4 @@
+#include "../funcs/Callable.hpp"
 #include "./Interpreter.hpp"
 #include "../lexer/Expr.hpp"
 #include "../tokeniser/Token.hpp"
@@ -5,6 +6,7 @@
 #include "../superclass/super.hpp"
 #include "../lexer/Stmt.hpp"
 #include "../environment/Environment.hpp"
+#include "../funcs/Function.hpp"
 #include <cmath>
 #include <cstddef>
 #include <cstdlib>
@@ -15,14 +17,62 @@
 #include <string>
 #include <sysexits.h>
 #include <format>
+#include <chrono>
 #include <vector>
+
+
+namespace {
+
+    class ClockCallable : public Callable {
+
+        private:
+
+
+
+        public:
+
+            int arity(void) const override {
+
+                return 0;
+            }
+
+            super::object call(Interpreter& interpreter, std::vector<super::object>& args) override {
+
+                auto now = std::chrono::system_clock::now();
+
+                auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+
+                return super::object(static_cast<double>(millis) / 1000.0);
+            }
+
+            std::string to_string(void) const override {
+
+                return "<native fn>";
+            }
+
+            ~ClockCallable() = default;
+    };
+}
 
 
 Interpreter::Interpreter() {
 
     this->global = std::make_unique<Environment>();
-
     this->environment = this->global.get();
+
+    std::string lexeme = "clock";
+    super::object nil(nullptr);
+
+    this->global->define(
+
+        Token (
+
+            TokenType::IDENTIFIER,
+            lexeme,
+            nil,
+            0
+
+        ), super::object(std::make_shared<ClockCallable>()));
 }
 
 
@@ -195,6 +245,27 @@ super::object Interpreter::visitBinaryExpr(const Binary& expr) {
 }
 
 
+super::object Interpreter::visitCallExpr(const Call& expr) {
+
+    super::object callee = this->evaluate(*expr.callee.get());
+
+    std::vector<super::object> args;
+
+    for (int i = 0; i < expr.args.size(); i++)
+        args.emplace_back(this->evaluate(*expr.args[i].get()));
+
+    if (!callee.is_callable())
+        throw Interpreter::RuntimeError(expr.paren, "CAN CALL ONLY FUNCTIONS AND CLASSES");
+
+    std::shared_ptr<Callable> function = callee.as_callable();
+
+    if (args.size() != function->arity())
+        throw Interpreter::RuntimeError(expr.paren, "EXPECTED " + std::to_string(function->arity()) + " ARGUMENTS BUT GOT " + std::to_string(args.size()));
+
+    return function->call(*this, args);
+}
+
+
 super::object Interpreter::visitLiteralExpr(const Literal& expr) {
 
     return expr.value;
@@ -223,6 +294,16 @@ super::object Interpreter::visitExpressionStmt(const Expression& stmt) {
 
     if (this->repl)
         std::cout << val.to_string() << std::endl;
+
+    return nullptr;
+}
+
+
+super::object Interpreter::visitFunctionStmt(const Function& stmt) {
+
+    std::shared_ptr<Callable> function = std::make_shared<CallableFunction>(&stmt);
+
+    environment->define(stmt.name, function);
 
     return nullptr;
 }

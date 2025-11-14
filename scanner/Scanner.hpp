@@ -13,25 +13,26 @@ class Scanner {
         
        inline static std::unordered_map<std::string, TokenType> keywords = {
             
-            {"and",    TokenType::AND},
-            {"super",  TokenType::SUPER},
-            {"class",  TokenType::CLASS},
-            {"def",    TokenType::DEF},
-            {"do",     TokenType::DO},
-            {"else",   TokenType::ELSE},
-            {"false",  TokenType::FALSE},
-            {"for",    TokenType::FOR},
-            {"if",     TokenType::IF},
-            {"jump",   TokenType::JUMP},
-            {"nil",    TokenType::NIL},
-            {"or",     TokenType::OR},
-            {"ioputf", TokenType::IOPUTF},
+            {"and",     TokenType::AND},
+            {"as",      TokenType::AS},
+            {"super",   TokenType::SUPER},
+            {"class",   TokenType::CLASS},
+            {"def",     TokenType::DEF},
+            {"do",      TokenType::DO},
+            {"else",    TokenType::ELSE},
+            {"false",   TokenType::FALSE},
+            {"for",     TokenType::FOR},
+            {"if",      TokenType::IF},
+            {"jump",    TokenType::JUMP},
+            {"nil",     TokenType::NIL},
+            {"or",      TokenType::OR},
+            {"ioputf",  TokenType::IOPUTF},
             {"ioputfn", TokenType::IOPUTFN},
-            {"then",   TokenType::THEN},
-            {"this",   TokenType::THIS},
-            {"true",   TokenType::TRUE},
-            {"var",    TokenType::VAR},
-            {"while",  TokenType::WHILE}
+            {"then",    TokenType::THEN},
+            {"this",    TokenType::THIS},
+            {"true",    TokenType::TRUE},
+            {"var",     TokenType::VAR},
+            {"while",   TokenType::WHILE}
         };
 
         int start = 0;

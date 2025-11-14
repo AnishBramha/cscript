@@ -229,20 +229,19 @@ void Scanner::multilineComment(void) {
 
         if (this->peek() == '/' && this->peekNext() == '*') {
 
-            this->advance(); this->advance();
-
+            this->advance();
+            this->advance();
             nestingLevel++;
         
         } else if (this->peek() == '*' && this->peekNext() == '/') {
 
-            this->advance(); this->advance();
-
+            this->advance();
+            this->advance();
             nestingLevel--;
         
         } else if (this->peek() == '\n') {
 
             this->line++;
-
             this->advance();
         
         } else

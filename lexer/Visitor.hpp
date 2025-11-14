@@ -14,6 +14,7 @@ using std::unique_ptr;
 
 class Assign;
 class Binary;
+class Call;
 class Grouping;
 class Literal;
 class Logical;
@@ -21,6 +22,7 @@ class Unary;
 class Variable;
 class Block;
 class Expression;
+class Function;
 class If;
 class Print;
 class Println;
@@ -34,6 +36,7 @@ class Visitor {
 
 		virtual object visitAssignExpr(const Assign& expr);
 		virtual object visitBinaryExpr(const Binary& expr);
+		virtual object visitCallExpr(const Call& expr);
 		virtual object visitGroupingExpr(const Grouping& expr);
 		virtual object visitLiteralExpr(const Literal& expr);
 		virtual object visitLogicalExpr(const Logical& expr);
@@ -42,6 +45,7 @@ class Visitor {
 
 		virtual object visitBlockStmt(const Block& stmt);
 		virtual object visitExpressionStmt(const Expression& stmt);
+		virtual object visitFunctionStmt(const Function& stmt);
 		virtual object visitIfStmt(const If& stmt);
 		virtual object visitPrintStmt(const Print& stmt);
 		virtual object visitPrintlnStmt(const Println& stmt);
