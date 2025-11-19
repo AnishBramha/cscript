@@ -55,7 +55,6 @@ class Parser {
 
         void synchronise(void);
 
-
     public:
 
         Parser(std::vector<Token>& tokens);

@@ -1,0 +1,21 @@
+def fib(n) as do {
+
+    var phi := (1 / (5 ^ 0.5)) * (((1 + (5 ^ 0.5)) / 2) ^ n);
+    var psi := -(1 / (5 ^ 0.5)) * (((1 - (5 ^ 0.5)) / 2) ^ n);
+
+    jump phi + psi;
+}
+
+
+for var i := 0; i < 20; i := i + 1 do {
+
+    ioputf fib(i) + " ";
+}
+
+
+ioputfn "";
+
+
+
+
+

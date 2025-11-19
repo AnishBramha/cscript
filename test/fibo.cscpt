@@ -1,0 +1,15 @@
+def fib(n) as do {
+
+    if n = 0 then do jump 0;
+    else do if n = 1 then do jump 1;
+
+    else do jump fib(n - 1) + fib(n - 2);
+}
+
+
+ioputfn fib(5);
+
+
+
+
+
