@@ -1,8 +1,8 @@
-# cscript
+# `cscript`
 My implementation of Robert Nystrom's jlox interpreter, ported to C++.
 
 ## About
-cscript is a high-level, dynamic, interpreted and weakly-typed scripting language.
+cscript is a high-level, dynamic, interpreted and weakly-typed scripting language. Use the default file extension `.cscpt` (although any file type can theoretically be used).
 
 ## Usage
 
