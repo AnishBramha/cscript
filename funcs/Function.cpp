@@ -1,5 +1,6 @@
 #include "./Function.hpp"
 #include "../superclass/super.hpp"
+#include <cstddef>
 #include <memory>
 #include <stdexcept>
 #include <utility>
@@ -15,7 +16,7 @@ super::object CallableFunction::call(Interpreter& interpreter, std::vector<super
 
     std::shared_ptr<Environment> environment = std::make_shared<Environment>(this->closure.get());
 
-    for (int i = 0; i < declaration->params.size(); i++)
+    for (size_t i = 0; i < declaration->params.size(); i++)
         environment->define(declaration->params.at(i), args.at(i));
 
     try {
@@ -33,7 +34,7 @@ super::object CallableFunction::call(Interpreter& interpreter, std::vector<super
 
 int CallableFunction::arity(void) const {
 
-    return this->declaration->params.size();
+    return static_cast<int>(this->declaration->params.size());
 }
 
 

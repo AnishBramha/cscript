@@ -7,7 +7,7 @@ def fib(n) as do {
 }
 
 
-ioputfn fib(5);
+ioputfn fib(20);
 
 
 

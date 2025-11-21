@@ -3,6 +3,7 @@
 #include "../tokeniser/Token.hpp"
 #include "../main/cscript.hpp"
 #include <algorithm>
+#include <cstddef>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -593,13 +594,13 @@ bool Parser::isAtEnd(void) {
 
 Token Parser::peek(void) {
 
-    return this->tokens.at(this->current);
+    return this->tokens.at(static_cast<size_t>(this->current));
 }
 
 
 Token Parser::previous(void) {
 
-    return this->tokens.at(this->current - 1);
+    return this->tokens.at(static_cast<size_t>(this->current - 1));
 }
 
 

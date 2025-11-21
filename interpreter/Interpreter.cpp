@@ -36,7 +36,7 @@ namespace {
                 return 0;
             }
 
-            super::object call(Interpreter& interpreter, std::vector<super::object>& args) override {
+            super::object call(Interpreter&, std::vector<super::object>&) override {
 
                 auto now = std::chrono::system_clock::now();
 
@@ -251,7 +251,7 @@ super::object Interpreter::visitCallExpr(const Call& expr) {
 
     std::vector<super::object> args;
 
-    for (int i = 0; i < expr.args.size(); i++)
+    for (size_t i = 0; i < expr.args.size(); i++)
         args.emplace_back(this->evaluate(*expr.args[i].get()));
 
     if (!callee.is_callable())
@@ -259,7 +259,7 @@ super::object Interpreter::visitCallExpr(const Call& expr) {
 
     std::shared_ptr<Callable> function = callee.as_callable();
 
-    if (args.size() != function->arity())
+    if (args.size() != static_cast<size_t>(function->arity()))
         throw Interpreter::RuntimeError(expr.paren, "EXPECTED " + std::to_string(function->arity()) + " ARGUMENTS BUT GOT " + std::to_string(args.size()));
 
     return function->call(*this, args);

@@ -12,87 +12,87 @@ using std::vector;
 
 using std::unique_ptr;
 
-object Visitor::visitAssignExpr(const Assign& expr) {
+object Visitor::visitAssignExpr(const Assign&) {
 
 	return object();
 }
 
-object Visitor::visitBinaryExpr(const Binary& expr) {
+object Visitor::visitBinaryExpr(const Binary&) {
 
 	return object();
 }
 
-object Visitor::visitCallExpr(const Call& expr) {
+object Visitor::visitCallExpr(const Call&) {
 
 	return object();
 }
 
-object Visitor::visitGroupingExpr(const Grouping& expr) {
+object Visitor::visitGroupingExpr(const Grouping&) {
 
 	return object();
 }
 
-object Visitor::visitLiteralExpr(const Literal& expr) {
+object Visitor::visitLiteralExpr(const Literal&) {
 
 	return object();
 }
 
-object Visitor::visitLogicalExpr(const Logical& expr) {
+object Visitor::visitLogicalExpr(const Logical&) {
 
 	return object();
 }
 
-object Visitor::visitUnaryExpr(const Unary& expr) {
+object Visitor::visitUnaryExpr(const Unary&) {
 
 	return object();
 }
 
-object Visitor::visitVariableExpr(const Variable& expr) {
+object Visitor::visitVariableExpr(const Variable&) {
 
 	return object();
 }
 
-object Visitor::visitBlockStmt(const Block& stmt) {
+object Visitor::visitBlockStmt(const Block&) {
 
 	return object();
 }
 
-object Visitor::visitExpressionStmt(const Expression& stmt) {
+object Visitor::visitExpressionStmt(const Expression&) {
 
 	return object();
 }
 
-object Visitor::visitFunctionStmt(const Function& stmt) {
+object Visitor::visitFunctionStmt(const Function&) {
 
 	return object();
 }
 
-object Visitor::visitIfStmt(const If& stmt) {
+object Visitor::visitIfStmt(const If&) {
 
 	return object();
 }
 
-object Visitor::visitPrintStmt(const Print& stmt) {
+object Visitor::visitPrintStmt(const Print&) {
 
 	return object();
 }
 
-object Visitor::visitPrintlnStmt(const Println& stmt) {
+object Visitor::visitPrintlnStmt(const Println&) {
 
 	return object();
 }
 
-object Visitor::visitReturnStmt(const Return& stmt) {
+object Visitor::visitReturnStmt(const Return&) {
 
 	return object();
 }
 
-object Visitor::visitVarStmt(const Var& stmt) {
+object Visitor::visitVarStmt(const Var&) {
 
 	return object();
 }
 
-object Visitor::visitWhileStmt(const While& stmt) {
+object Visitor::visitWhileStmt(const While&) {
 
 	return object();
 }

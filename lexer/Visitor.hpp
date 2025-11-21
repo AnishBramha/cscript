@@ -35,24 +35,24 @@ class Visitor {
 
 	public:
 
-		virtual object visitAssignExpr(const Assign& expr);
-		virtual object visitBinaryExpr(const Binary& expr);
-		virtual object visitCallExpr(const Call& expr);
-		virtual object visitGroupingExpr(const Grouping& expr);
-		virtual object visitLiteralExpr(const Literal& expr);
-		virtual object visitLogicalExpr(const Logical& expr);
-		virtual object visitUnaryExpr(const Unary& expr);
-		virtual object visitVariableExpr(const Variable& expr);
+		virtual object visitAssignExpr(const Assign&);
+		virtual object visitBinaryExpr(const Binary&);
+		virtual object visitCallExpr(const Call&);
+		virtual object visitGroupingExpr(const Grouping&);
+		virtual object visitLiteralExpr(const Literal&);
+		virtual object visitLogicalExpr(const Logical&);
+		virtual object visitUnaryExpr(const Unary&);
+		virtual object visitVariableExpr(const Variable&);
 
-		virtual object visitBlockStmt(const Block& stmt);
-		virtual object visitExpressionStmt(const Expression& stmt);
-		virtual object visitFunctionStmt(const Function& stmt);
-		virtual object visitIfStmt(const If& stmt);
-		virtual object visitPrintStmt(const Print& stmt);
-		virtual object visitPrintlnStmt(const Println& stmt);
-		virtual object visitReturnStmt(const Return& stmt);
-		virtual object visitVarStmt(const Var& stmt);
-		virtual object visitWhileStmt(const While& stmt);
+		virtual object visitBlockStmt(const Block&);
+		virtual object visitExpressionStmt(const Expression&);
+		virtual object visitFunctionStmt(const Function&);
+		virtual object visitIfStmt(const If&);
+		virtual object visitPrintStmt(const Print&);
+		virtual object visitPrintlnStmt(const Println&);
+		virtual object visitReturnStmt(const Return&);
+		virtual object visitVarStmt(const Var&);
+		virtual object visitWhileStmt(const While&);
 
 
 		virtual ~Visitor() = default;

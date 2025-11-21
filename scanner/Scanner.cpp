@@ -33,16 +33,16 @@ char Scanner::peek(void) {
     if (this->isAtEnd())
         return '\0';
 
-    return this->source.at(this->current);
+    return this->source.at(static_cast<size_t>(this->current));
 }
 
 
 char Scanner::peekNext(void) {
 
-    if (this->current + 1 >= this->source.length())
+    if (static_cast<size_t>(this->current + 1) >= this->source.length())
         return '\0';
 
-    return this->source.at(this->current + 1);
+    return this->source.at(static_cast<size_t>(this->current + 1));
 }
 
 
@@ -60,7 +60,7 @@ void Scanner::number(void) {
             this->advance();
     }
 
-    super::object number = std::stod(this->source.substr(this->start, this->current - this->start));
+    super::object number = std::stod(this->source.substr(static_cast<size_t>(this->start), static_cast<size_t>(this->current - this->start)));
 
     this->addToken(TokenType::NUMBER, number);
 
@@ -73,7 +73,7 @@ void Scanner::identifier(void) {
     while (std::isalnum(this->peek()) || this->peek() == '_')
         this->advance();
 
-    std::string text = this->source.substr(this->start, this->current - this->start);
+    std::string text = this->source.substr(static_cast<size_t>(this->start), static_cast<size_t>(this->current - this->start));
     auto it = Scanner::keywords.find(text);
 
     TokenType type;
@@ -184,13 +184,13 @@ void Scanner::scanToken(void) {
 
 bool Scanner::isAtEnd(void) {
 
-    return this->current >= this->source.length();
+    return static_cast<size_t>(this->current) >= this->source.length();
 }
 
 
 char Scanner::advance(void) {
 
-    return this->source.at(this->current++);
+    return this->source.at(static_cast<size_t>(this->current++));
 }
 
 
@@ -204,7 +204,7 @@ void Scanner::addToken(TokenType type) {
 
 void Scanner::addToken(TokenType type, super::object& literal) {
 
-    std::string text = this->source.substr(this->start, this->current - this->start);
+    std::string text = this->source.substr(static_cast<size_t>(this->start), static_cast<size_t>(this->current - this->start));
 
     this->tokens.emplace_back(new Token(type, text, literal, this->line));
 }
@@ -212,7 +212,7 @@ void Scanner::addToken(TokenType type, super::object& literal) {
 
 bool Scanner::match(char expected) {
 
-    if (this->isAtEnd() || this->source.at(this->current) != expected)
+    if (this->isAtEnd() || this->source.at(static_cast<size_t>(this->current)) != expected)
         return false;
 
     this->current++;
@@ -282,7 +282,7 @@ void Scanner::str(void) {
 
     this->advance();
 
-    super::object literal = this->source.substr(this->start + 1, this->current - this->start - 2);
+    super::object literal = this->source.substr(static_cast<size_t>(this->start + 1), static_cast<size_t>(this->current - this->start - 2));
 
     this->addToken(TokenType::STRING, literal);
 

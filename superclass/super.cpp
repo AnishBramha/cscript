@@ -120,6 +120,8 @@ std::shared_ptr<Callable> super::object::as_callable(void) const {
 
         std::cerr << "SUPER ERRPR: NOT CALLABLE" << std::endl;
     }
+
+    return nullptr;
 }
 
 

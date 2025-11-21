@@ -174,7 +174,7 @@ def declareVisitor(outputDir : str, baseNames : dict[str, list[str]]) -> None:
 
                 typeName = _type.split(':')[0].strip()
                 writer.write(f'\t\tvirtual object visit{typeName}{baseName}(')
-                writer.write(f'const {typeName}& {baseName.lower()});\n')
+                writer.write(f'const {typeName}&);\n')
 
             writer.write('\n')
 
@@ -207,7 +207,7 @@ def defineVisitor(outputDir : str, baseNames : dict[str, list[str]]) -> None:
 
                 typeName = _type.split(':')[0].strip()
                 writer.write(f'object Visitor::visit{typeName}{baseName}(')
-                writer.write(f'const {typeName}& {baseName.lower()}) {{\n\n')
+                writer.write(f'const {typeName}&) {{\n\n')
                 writer.write(f'\treturn object();\n')
                 writer.write(f'}}\n\n')
 
