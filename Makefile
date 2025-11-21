@@ -4,8 +4,7 @@ CXXFLAGS = -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -f
 
 LDFLAGS = -fsanitize=address,undefined -g -flto
 
-TARGET = cscpt.out
-BUILD_DIR = build
+TARGET = cscpt.outBUILD_DIR = build
 
 SRCS = $(shell find . -name "*.cpp")
 OBJS = $(patsubst ./%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
@@ -28,17 +27,26 @@ $(eval $(COLOR_CODES))
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	@echo "\n\n$(BOLD)$(GREEN)Compilation finished...$(RESET)"
-	@echo "\n\n$(BOLD)$(CYAN)Linking...$(RESET)\n"
-	$(CXX) $(LDFLAGS) -o $@ $^
-	@echo "\n\n$(BOLD)$(GREEN)Linking finished...$(RESET)"
-	@echo "\n\n$(BOLD)$(CYAN)Executable dumped:$(RESET) $(BOLD)$(YELLOW)$(TARGET)$(RESET)\n\n"
+	@echo "\n$(BOLD)$(GREEN)Compilation finished ✓$(RESET)"
+	@echo "\n$(BOLD)$(CYAN)Linking ⧗$(RESET)"
+	@if ! $(CXX) $(LDFLAGS) -o $@ $^ > /dev/null ; then \
+		echo "\n$(BOLD)$(RED)Linking failed ✘$(RESET)\n"; \
+		exit 1;\
+	fi
+
+	@echo "$(BOLD)$(GREEN)Linking finished ✓$(RESET)"
+	@echo "\n$(BOLD)$(CYAN)Executable dumped:$(RESET) $(BOLD)$(YELLOW)$(TARGET) ✓$(RESET)\n\n"
 
 $(BUILD_DIR)/%.o: ./%.cpp
-	@echo "\n\n$(BOLD)$(CYAN)Compiling $<...$(RESET)\n\n"
+	@echo "\n$(BOLD)$(CYAN)Compiling $< ⧗$(RESET)"
 	@
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+	@if ! $(CXX) $(CXXFLAGS) -c $< -o $@ > /dev/null; then \
+		echo "\n$(BOLD)$(RED)Compilation failed ✘$(RESET)\n\n"; \
+		exit 1;\
+	fi
+
 
 clean:
 	@echo "Cleaning build directory..."
@@ -49,15 +57,3 @@ clear:
 	rm -rf $(BUILD_DIR) $(TARGET)
 
 -include $(DEPS)
-
-
-
-
-
-
-
-
-
-
-
-
