@@ -4,7 +4,8 @@ CXXFLAGS = -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -f
 
 LDFLAGS = -fsanitize=address,undefined -g -flto
 
-TARGET = cscpt.outBUILD_DIR = build
+TARGET = cscpt.out
+BUILD_DIR = build
 
 SRCS = $(shell find . -name "*.cpp")
 OBJS = $(patsubst ./%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
