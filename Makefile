@@ -44,7 +44,7 @@ $(BUILD_DIR)/%.o: ./%.cpp
 	@mkdir -p $(dir $@)
 
 	@if ! $(CXX) $(CXXFLAGS) -c $< -o $@ > /dev/null; then \
-		echo "\n$(BOLD)$(RED)Compilation failed ✘$(RESET)\n\n"; \
+		echo "\n$(BOLD)$(RED)Compilation exited abnormally ✘$(RESET)\n\n"; \
 		exit 1;\
 	fi
 
