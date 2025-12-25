@@ -10,7 +10,7 @@
 
 Environment::Environment() : enclosing(nullptr) {}
 
-Environment::Environment(Environment* enclosing)
+Environment::Environment(std::shared_ptr<Environment> enclosing)
     : enclosing(enclosing) {}
 
 
@@ -63,7 +63,7 @@ Environment* Environment::ancestor(int distance) {
     Environment* environment = this;
 
     for (int i = 0; i < distance; i++)
-        environment = environment->enclosing;
+        environment = environment->enclosing.get();
 
     return environment;
 }

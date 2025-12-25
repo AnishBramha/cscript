@@ -49,13 +49,15 @@ Expr* Parser::unsafe_assignment(void) {
         Token assign = this->previous();
         std::unique_ptr<Expr> val(this->unsafe_assignment());
 
-        auto* var = dynamic_cast<Variable*>(expr.get());
-
-        if (var) {
+        if (auto* var = dynamic_cast<Variable*>(expr.get())) {
 
             Token name = var->name;
 
             return new Assign(name, std::move(val));
+
+        } else if (auto* var = dynamic_cast<Get*>(expr.get())) {
+
+            return new Set(std::move(const_cast<std::unique_ptr<Expr>&>(var->obj)), var->name, std::move(val));
         }
 
         std::string errMessage = "INVALID ASSIGNMENT TARGET";
@@ -193,6 +195,14 @@ Expr* Parser::unsafe_call(void) { // free memory later
         if (this->match({TokenType::LEFT_PAREN}))
             expr.reset(this->unsafe_finishCall(std::move(expr)));
 
+        else if (this->match({TokenType::DOT})) {
+
+            std::string errMessage = "EXPECTED CLASS PROPERTY AFTER \'.\'";
+            Token name = this->consume(TokenType::IDENTIFIER, errMessage);
+
+            expr.reset(new Get(std::move(expr), name));
+        }
+
         else
             break;
     }
@@ -240,6 +250,9 @@ Expr* Parser::unsafe_primary(void) { // free memory later
     
     if (this->match({TokenType::NUMBER, TokenType::STRING}))
         return new Literal(this->previous().literal);
+
+    if (this->match({TokenType::THIS}))
+        return new This(this->previous());
 
     if (this->match({TokenType::IDENTIFIER}))
         return new Variable(this->previous());
@@ -439,6 +452,9 @@ Stmt* Parser::unsafe_declaration(void) { // free memory later
 
     try {
 
+        if (this->match({TokenType::CLASS}))
+            return this->unsafe_classDeclaration();
+
         if (this->match({TokenType::DEF}))
             return this->unsafe_function("function");
 
@@ -453,6 +469,29 @@ Stmt* Parser::unsafe_declaration(void) { // free memory later
 
         return nullptr;
     }
+}
+
+
+Stmt* Parser::unsafe_classDeclaration(void) {
+
+    std::string errMessage = "EXPECTED CLASS NAME";
+    Token name = this->consume(TokenType::IDENTIFIER, errMessage);
+
+    errMessage = "EXPECTED \'AS\' CLASS HEADER TO BODY LINKER";
+    this->consume(TokenType::AS, errMessage);
+
+    errMessage = "EXPECTED \'{\' BEFORE CLASS BODY";
+    this->consume(TokenType::LEFT_BRACE, errMessage);
+
+    std::vector<std::unique_ptr<Stmt>> methods;
+
+    while (!this->check(TokenType::RIGHT_BRACE) && !this->isAtEnd())
+        methods.emplace_back(unsafe_function("method"));
+
+    errMessage = "EXPECTED \'}\' AFTER CLASS BODY";
+    this->consume(TokenType::RIGHT_BRACE, errMessage);
+
+    return new Class(name, std::move(methods));
 }
 
 

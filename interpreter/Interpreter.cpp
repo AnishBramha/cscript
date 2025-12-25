@@ -1,4 +1,4 @@
-#include "../funcs/Callable.hpp"
+#include "../wrappers/Callable.hpp"
 #include "./Interpreter.hpp"
 #include "../lexer/Expr.hpp"
 #include "../tokeniser/Token.hpp"
@@ -6,7 +6,9 @@
 #include "../superclass/super.hpp"
 #include "../lexer/Stmt.hpp"
 #include "../environment/Environment.hpp"
-#include "../funcs/Function.hpp"
+#include "../wrappers/Function.hpp"
+#include "../wrappers/Class.hpp"
+#include "../wrappers/Instance.hpp"
 #include <cmath>
 #include <cstddef>
 #include <cstdlib>
@@ -18,6 +20,7 @@
 #include <sysexits.h>
 #include <format>
 #include <chrono>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -278,6 +281,17 @@ super::object Interpreter::visitCallExpr(const Call& expr) {
 }
 
 
+super::object Interpreter::visitGetExpr(const Get& expr) {
+
+    super::object obj = this->evaluate(*expr.obj.get());
+
+    if (obj.is_instance())
+        return obj.as_instance()->get(expr.name);
+
+    throw Interpreter::RuntimeError(expr.name, "PROPERTY ATTACHED TO ILLEGAL NON-INSTANCE");
+}
+
+
 super::object Interpreter::visitLiteralExpr(const Literal& expr) {
 
     return expr.value;
@@ -297,6 +311,27 @@ super::object Interpreter::visitLogicalExpr(const Logical& expr) {
             return left;
 
     return this->evaluate(*expr.right.get());
+}
+
+
+super::object Interpreter::visitSetExpr(const Set& expr) {
+
+    super::object obj = this->evaluate(*expr.obj.get());
+
+    if (!obj.is_instance())
+        throw Interpreter::RuntimeError(expr.name, "FIELD ATTACHED TO ILLEGAL NON-INSTANCE");
+
+    super::object val = this->evaluate(*expr.val.get());
+
+    obj.as_instance()->set(expr.name, val);
+
+    return val;
+}
+
+
+super::object Interpreter::visitThisExpr(const This& expr) {
+
+    return this->lookUpVariable(expr.keyword, expr);
 }
 
 
@@ -410,9 +445,28 @@ super::object Interpreter::visitAssignExpr(const Assign& expr) {
 
 super::object Interpreter::visitBlockStmt(const Block& stmt) {
 
-    std::shared_ptr<Environment> environment = std::make_shared<Environment>(this->environment.get());
+    std::shared_ptr<Environment> environment = std::make_shared<Environment>(this->environment);
 
     this->executeBlock(stmt.statements, environment);
+
+    return nullptr;
+}
+
+super::object Interpreter::visitClassStmt(const Class& stmt) {
+
+    this->environment->define(stmt.name, nullptr);
+
+    std::unordered_map<std::string, std::shared_ptr<CallableFunction>> methods;
+
+    for (const std::unique_ptr<Stmt>& method : stmt.methods) {
+
+        const auto* function = dynamic_cast<Function*>(method.get());
+
+        methods.emplace(std::make_pair(function->name.lexeme, std::make_shared<CallableFunction>(function, this->environment)));
+    }
+    
+    std::shared_ptr<Callable> _class =  std::make_shared<CallableClass>(stmt.name.lexeme, methods);
+    this->environment->assign(stmt.name, super::object(_class));
 
     return nullptr;
 }

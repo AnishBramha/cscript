@@ -1,0 +1,13 @@
+class Dog as {
+
+    bark() as do { ioputfn this; }
+}
+
+
+var method := Dog().bark;
+method();
+
+
+
+
+

@@ -32,6 +32,20 @@ class Block : public Stmt {
 };
 
 
+class Class : public Stmt {
+
+	public:
+
+		const Token name;
+		const vector<unique_ptr<Stmt>> methods;
+
+		Class(const Token& name, vector<unique_ptr<Stmt>>&& methods);
+
+		object accept(Visitor& visitor) override;
+
+};
+
+
 class Expression : public Stmt {
 
 	public:

@@ -14,6 +14,14 @@ object Block::accept(Visitor& visitor) {
 }
 
 
+Class::Class(const Token& name, vector<unique_ptr<Stmt>>&& methods) : name(name), methods(std::move(methods)) {}
+
+object Class::accept(Visitor& visitor) {
+
+	return visitor.visitClassStmt(*this);
+}
+
+
 Expression::Expression(std::unique_ptr<Expr> expr) : expr(std::move(expr)) {}
 
 object Expression::accept(Visitor& visitor) {

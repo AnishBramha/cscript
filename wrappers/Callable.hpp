@@ -10,8 +10,6 @@ class Callable {
 
     private:
 
-
-
     public:
 
         virtual int arity(void) const = 0;

@@ -62,6 +62,20 @@ class Call : public Expr {
 };
 
 
+class Get : public Expr {
+
+	public:
+
+		const std::unique_ptr<Expr> obj;
+		const Token name;
+
+		Get(std::unique_ptr<Expr> obj, const Token& name);
+
+		object accept(Visitor& visitor) override;
+
+};
+
+
 class Grouping : public Expr {
 
 	public:
@@ -97,6 +111,34 @@ class Logical : public Expr {
 		const std::unique_ptr<Expr> right;
 
 		Logical(std::unique_ptr<Expr> left, const Token& operatr, std::unique_ptr<Expr> right);
+
+		object accept(Visitor& visitor) override;
+
+};
+
+
+class Set : public Expr {
+
+	public:
+
+		const std::unique_ptr<Expr> obj;
+		const Token name;
+		const std::unique_ptr<Expr> val;
+
+		Set(std::unique_ptr<Expr> obj, const Token& name, std::unique_ptr<Expr> val);
+
+		object accept(Visitor& visitor) override;
+
+};
+
+
+class This : public Expr {
+
+	public:
+
+		const Token keyword;
+
+		This(const Token& keyword);
 
 		object accept(Visitor& visitor) override;
 

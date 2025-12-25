@@ -30,6 +30,14 @@ object Call::accept(Visitor& visitor) {
 }
 
 
+Get::Get(std::unique_ptr<Expr> obj, const Token& name) : obj(std::move(obj)), name(name) {}
+
+object Get::accept(Visitor& visitor) {
+
+	return visitor.visitGetExpr(*this);
+}
+
+
 Grouping::Grouping(std::unique_ptr<Expr> expr) : expr(std::move(expr)) {}
 
 object Grouping::accept(Visitor& visitor) {
@@ -51,6 +59,22 @@ Logical::Logical(std::unique_ptr<Expr> left, const Token& operatr, std::unique_p
 object Logical::accept(Visitor& visitor) {
 
 	return visitor.visitLogicalExpr(*this);
+}
+
+
+Set::Set(std::unique_ptr<Expr> obj, const Token& name, std::unique_ptr<Expr> val) : obj(std::move(obj)), name(name), val(std::move(val)) {}
+
+object Set::accept(Visitor& visitor) {
+
+	return visitor.visitSetExpr(*this);
+}
+
+
+This::This(const Token& keyword) : keyword(keyword) {}
+
+object This::accept(Visitor& visitor) {
+
+	return visitor.visitThisExpr(*this);
 }
 
 

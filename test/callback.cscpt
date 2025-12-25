@@ -1,0 +1,23 @@
+class Thing as {
+
+    getCallback() as do {
+
+        def localFunction() as do { ioputfn this; }
+
+        jump localFunction;
+    }
+}
+
+
+var callback := Thing().getCallback()();
+
+var callback2 := Thing().getCallback();
+callback2();
+
+
+def notAMethod() as do { ioputfn this; }
+notAMethod();
+
+
+
+

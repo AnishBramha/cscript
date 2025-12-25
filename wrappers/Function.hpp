@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Callable.hpp"
+#include "./Callable.hpp"
+#include "./Instance.hpp"
 #include "../lexer/Stmt.hpp"
 #include <memory>
 #include <stdexcept>
@@ -19,6 +20,8 @@ class CallableFunction : public Callable {
         int arity(void) const override;
         super::object call(Interpreter& interpreter, std::vector<super::object>& args) override;
         std::string to_string(void) const override;
+
+        std::shared_ptr<CallableFunction> bind(const Instance& instance);
 
         ~CallableFunction() = default;
 

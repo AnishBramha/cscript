@@ -27,6 +27,11 @@ object Visitor::visitCallExpr(const Call&) {
 	return object();
 }
 
+object Visitor::visitGetExpr(const Get&) {
+
+	return object();
+}
+
 object Visitor::visitGroupingExpr(const Grouping&) {
 
 	return object();
@@ -42,6 +47,16 @@ object Visitor::visitLogicalExpr(const Logical&) {
 	return object();
 }
 
+object Visitor::visitSetExpr(const Set&) {
+
+	return object();
+}
+
+object Visitor::visitThisExpr(const This&) {
+
+	return object();
+}
+
 object Visitor::visitUnaryExpr(const Unary&) {
 
 	return object();
@@ -53,6 +68,11 @@ object Visitor::visitVariableExpr(const Variable&) {
 }
 
 object Visitor::visitBlockStmt(const Block&) {
+
+	return object();
+}
+
+object Visitor::visitClassStmt(const Class&) {
 
 	return object();
 }

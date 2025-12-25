@@ -49,6 +49,7 @@ class Parser {
         Stmt* unsafe_function(const std::string& kind);
         Stmt* unsafe_declaration(void);
         Stmt* unsafe_varDeclaration(void);
+        Stmt* unsafe_classDeclaration(void);
         Stmt* unsafe_whileStatement(void);
 
         std::vector<std::unique_ptr<Stmt>> unsafe_block(void);

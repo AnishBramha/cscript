@@ -222,9 +222,12 @@ if __name__ == '__main__':
         'Assign     : Token name, Expr value',
         'Binary     : Expr left, Token oprtor, Expr right',
         'Call       : Expr callee, Token paren, vector<unique_ptr<Expr>> args',
+        'Get        : Expr obj, Token name',
         'Grouping   : Expr expr',
         'Literal    : object value',
         'Logical    : Expr left, Token operatr, Expr right',
+        'Set        : Expr obj, Token name, Expr val',
+        'This       : Token keyword',
         'Unary      : Token oprtor, Expr right',
         'Variable   : Token name'
     ]
@@ -232,6 +235,7 @@ if __name__ == '__main__':
     stmtTypes = [
 
         'Block      : vector<unique_ptr<Stmt>> statements',
+        'Class      : Token name, vector<unique_ptr<Stmt>> methods',
         'Expression : Expr expr',
         'Function   : Token name, vector<Token> params, vector<unique_ptr<Stmt>> body',
         'If         : Expr condition, Stmt thenBranch, Stmt elseBranch',

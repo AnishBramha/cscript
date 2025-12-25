@@ -1,0 +1,22 @@
+class Foo as {
+
+    fun() as do { jump nil; }
+
+    fn() as do { ioputfn "foo"; }
+}
+
+
+
+var foo := Foo();
+
+Foo().fn();
+
+ioputfn Foo;
+ioputfn foo;
+
+
+
+
+
+
+

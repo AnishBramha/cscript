@@ -38,11 +38,16 @@ class Interpreter : public Visitor {
         super::object visitUnaryExpr(const Unary& expr) override;
         super::object visitBinaryExpr(const Binary& expr) override;
         super::object visitCallExpr(const Call& expr) override;
+        super::object visitGetExpr(const Get& expr) override;
         super::object visitLiteralExpr(const Literal& expr) override;
         super::object visitLogicalExpr(const Logical& expr) override;
+        super::object visitSetExpr(const Set& expr) override;
+        super::object visitThisExpr(const This& expr) override;
         super::object visitVariableExpr(const Variable& expr) override;
         super::object visitAssignExpr(const Assign& expr) override;
 
+        super::object visitBlockStmt(const Block& stmt) override;
+        super::object visitClassStmt(const Class& stmt) override;
         super::object visitExpressionStmt(const Expression& stmt) override;
         super::object visitFunctionStmt(const Function& stmt) override;
         super::object visitIfStmt(const If& stmt) override;
@@ -51,7 +56,6 @@ class Interpreter : public Visitor {
         super::object visitReturnStmt(const Return& stmt) override;
         super::object visitVarStmt(const Var& stmt) override;
         super::object visitWhileStmt(const While& stmt) override;
-        super::object visitBlockStmt(const Block& stmt) override;
 
         void resolve(Expr* expr, int depth);
         void interpret(std::vector<Stmt*>& statements, bool repl);

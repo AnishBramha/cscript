@@ -5,7 +5,8 @@
 #include <string>
 #include <variant>
 #include <format>
-#include "../funcs/Callable.hpp"
+#include "../wrappers/Callable.hpp"
+#include "../wrappers/Instance.hpp"
 
 
 super::object::object() : obj(nullptr) {}
@@ -23,6 +24,8 @@ super::object::object(const char* obj) : obj(std::string(obj)) {}
 super::object::object(super::uninitialised_t) : obj(super::uninitialised_t{}) {}
 
 super::object::object(std::shared_ptr<Callable> callable) : obj(std::move(callable)) {}
+
+super::object::object(std::shared_ptr<Instance> instance) : obj(std::move(instance)) {}
 
 
 bool super::object::is_uninitialised(void) const {
@@ -53,6 +56,11 @@ bool super::object::is_string(void) const {
 bool super::object::is_callable(void) const {
 
     return std::holds_alternative<std::shared_ptr<Callable>>(this->obj);
+}
+
+bool super::object::is_instance(void) const {
+
+    return std::holds_alternative<std::shared_ptr<Instance>>(this->obj);
 }
 
 
@@ -124,6 +132,23 @@ std::shared_ptr<Callable> super::object::as_callable(void) const {
     return nullptr;
 }
 
+std::shared_ptr<Instance> super::object::as_instance(void) const {
+
+    try {
+
+        if (!this->is_instance())
+            throw std::bad_variant_access();
+
+        return *std::get_if<std::shared_ptr<Instance>>(&this->obj);
+
+    } catch (const std::bad_variant_access&) {
+
+        std::cerr << "SUPER ERROR: NOT AN INSTANCE" << std::endl;
+    }
+
+    return nullptr;
+}
+
 
 std::string super::object::to_string(void) const {
 
@@ -138,6 +163,12 @@ std::string super::object::to_string(void) const {
 
     if (this->is_string())
         return this->as_string();
+
+    if (this->is_callable())
+        return this->as_callable()->to_string();
+
+    if (this->is_instance())
+        return this->as_instance()->to_string();
 
     return "SUPER ERROR: UNEXPECTED OBJECT TYPE";
 }

@@ -117,6 +117,32 @@ super::object Resolver::visitReturnStmt(const Return& stmt) {
 }
 
 
+super::object Resolver::visitClassStmt(const Class& stmt) {
+
+    ClassType enclosingClass = this->currentClass;
+    this->currentClass = ClassType::CLASS;
+
+    this->declare(stmt.name);
+    this->define(stmt.name);
+
+    this->beginScope();
+    this->scopes.top().emplace(std::make_pair("this", true));
+
+    for (const std::unique_ptr<Stmt>& method : stmt.methods) {
+
+        FunctionType declaration = FunctionType::METHOD;
+
+        this->resolveFunction(dynamic_cast<Function*>(method.get()), declaration);
+    }
+
+    this->endScope();
+
+    this->currentClass = enclosingClass;
+
+    return nullptr;
+}
+
+
 super::object Resolver::visitWhileStmt(const While& stmt) {
 
     this->resolve(stmt.condition.get());
@@ -146,6 +172,14 @@ super::object Resolver::visitCallExpr(const Call& expr) {
 }
 
 
+super::object Resolver::visitGetExpr(const Get& expr) {
+
+    this->resolve(expr.obj.get());
+
+    return nullptr;
+}
+
+
 super::object Resolver::visitGroupingExpr(const Grouping& expr) {
 
     this->resolve(expr.expr.get());
@@ -164,6 +198,29 @@ super::object Resolver::visitLogicalExpr(const Logical& expr) {
 
     this->resolve(expr.left.get());
     this->resolve(expr.right.get());
+
+    return nullptr;
+}
+
+super::object Resolver::visitSetExpr(const Set& expr) {
+
+    this->resolve(expr.val.get());
+    this->resolve(expr.obj.get());
+
+    return nullptr;
+}
+
+super::object Resolver::visitThisExpr(const This& expr) {
+
+    if (this->currentClass == ClassType::NONE) {
+
+        std::string errMessage = "ILLEGAL REFERENCE TO \'this\' OUTSIDE A CLASS";
+        cscript::error(expr.keyword, errMessage);
+
+        return nullptr;
+    }
+
+    this->resolveLocal(const_cast<This*>(&expr), expr.keyword);
 
     return nullptr;
 }

@@ -14,12 +14,12 @@ class Environment {
 
         std::unordered_map<std::string, super::object> values;
 
-        Environment* enclosing;
+        std::shared_ptr<Environment> enclosing;
 
     public:
 
         Environment();
-        Environment(Environment* enclosing);
+        Environment(std::shared_ptr<Environment> enclosing);
 
         void define(const Token& name, super::object val);
         void assign(const Token& name, super::object val);
