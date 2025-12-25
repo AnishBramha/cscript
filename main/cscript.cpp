@@ -1,6 +1,7 @@
 #include "./cscript.hpp"
 #include "../lexer/Expr.hpp"
 #include "../parser/Parser.hpp"
+#include "../resolver/Resolver.hpp"
 #include "../tokeniser/Token.hpp"
 #include "../scanner/Scanner.hpp"
 #include <cstdlib>
@@ -178,6 +179,12 @@ void cscript::run(std::string& source, bool repl) {
 
         return;
     }
+
+    Resolver resolver(interpreter);
+    resolver.resolve(statements);
+
+    if (cscript::hadError)
+        return;
 
     cscript::interpreter.interpret(statements, repl);
 

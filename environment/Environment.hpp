@@ -21,10 +21,14 @@ class Environment {
         Environment();
         Environment(Environment* enclosing);
 
-        void define(const Token& name, super::object value);
+        void define(const Token& name, super::object val);
         void assign(const Token& name, super::object val);
+        void assignAt(int distance, const Token& name, super::object val);
 
         super::object get(const Token& name);
+        super::object getAt(int distance, const std::string& name);
+
+        Environment* ancestor(int distance);
 
         ~Environment() = default;
 };

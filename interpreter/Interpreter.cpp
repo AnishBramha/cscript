@@ -18,6 +18,7 @@
 #include <sysexits.h>
 #include <format>
 #include <chrono>
+#include <utility>
 #include <vector>
 
 
@@ -85,6 +86,17 @@ super::object Interpreter::visitGroupingExpr(const Grouping& expr) {
 super::object Interpreter::evaluate(Expr& expr) {
 
     return expr.accept(*this);
+}
+
+
+super::object Interpreter::lookUpVariable(const Token& name, const Expr& expr) {
+
+    auto distance = this->locals.find(&expr);
+
+    if (distance != this->locals.end())
+        return this->environment->getAt(distance->second, name.lexeme);
+
+    return this->global->get(name);
 }
 
 
@@ -376,7 +388,7 @@ super::object Interpreter::visitWhileStmt(const While& stmt) {
 
 super::object Interpreter::visitVariableExpr(const Variable& expr) {
 
-    return this->environment->get(expr.name);
+    return this->lookUpVariable(expr.name, expr);
 }
 
 
@@ -384,7 +396,13 @@ super::object Interpreter::visitAssignExpr(const Assign& expr) {
 
     super::object val = this->evaluate(*expr.value.get());
 
-    this->environment->assign(expr.name, val);
+    auto distance = this->locals.find(&expr);
+
+    if (distance != this->locals.end())
+        this->environment->assignAt(distance->second, expr.name, val);
+
+    else
+        this->global->assign(expr.name, val);
 
     return val;
 }
@@ -459,6 +477,14 @@ void Interpreter::interpret(std::vector<Stmt*>& statements, bool repl) {
 void Interpreter::execute(Stmt* stmt) {
 
     stmt->accept(*this);
+}
+
+
+void Interpreter::resolve(Expr* expr, int depth) {
+
+    this->locals.emplace(std::make_pair(expr, depth));
+
+    return;
 }
 
 

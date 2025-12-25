@@ -1,0 +1,21 @@
+var a := "global";
+
+{
+  def showA() as do {
+    ioputfn a;
+  }
+
+  showA();
+
+  var a := "block";
+  showA();
+}
+
+
+
+
+
+
+
+
+

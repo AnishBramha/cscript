@@ -5,6 +5,7 @@
 #include "../main/cscript.hpp"
 #include <stdexcept>
 #include <unordered_map>
+#include <utility>
 
 
 Environment::Environment() : enclosing(nullptr) {}
@@ -44,6 +45,30 @@ super::object Environment::get(const Token& name) {
 }
 
 
+super::object Environment::getAt(int distance, const std::string& name) {
+
+    return this->ancestor(distance)->values.find(name)->second;
+
+    // auto it = this->ancestor(distance)->values.find(name);
+    //
+    // if (it != this->ancestor(distance)->values.end())
+    //     return it->second;
+    //
+    // return nullptr;
+}
+
+
+Environment* Environment::ancestor(int distance) {
+
+    Environment* environment = this;
+
+    for (int i = 0; i < distance; i++)
+        environment = environment->enclosing;
+
+    return environment;
+}
+
+
 void Environment::assign(const Token& name, super::object val) {
 
     if (this->values.find(name.lexeme) != this->values.end()) {
@@ -61,6 +86,14 @@ void Environment::assign(const Token& name, super::object val) {
     }
 
     throw Interpreter::RuntimeError(name, "UNDEFINED VARIABLE \'" + name.lexeme + "\'");
+}
+
+
+void Environment::assignAt(int distance, const Token& name, super::object val) {
+
+    this->ancestor(distance)->values.emplace(std::make_pair(name.lexeme, val));
+
+    return;
 }
 
 

@@ -8,6 +8,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 
@@ -17,9 +18,11 @@ class Interpreter : public Visitor {
 
         std::shared_ptr<Environment> environment;
         bool repl = false;
+        std::unordered_map<const Expr*, int> locals;
 
         super::object evaluate(Expr& expr);
         void execute(Stmt* stmt);
+        super::object lookUpVariable(const Token& name, const Expr& expr);
 
         bool isTruthy(super::object);
         void checkNumberOperand(const Token& operatr, const super::object operand);
@@ -50,6 +53,7 @@ class Interpreter : public Visitor {
         super::object visitWhileStmt(const While& stmt) override;
         super::object visitBlockStmt(const Block& stmt) override;
 
+        void resolve(Expr* expr, int depth);
         void interpret(std::vector<Stmt*>& statements, bool repl);
         void executeBlock(const std::vector<std::unique_ptr<Stmt>>& statements, std::shared_ptr<Environment> environment);
 

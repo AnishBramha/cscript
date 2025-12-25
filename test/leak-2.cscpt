@@ -1,0 +1,9 @@
+def bad() as do {
+
+    var a := "first";
+    var a := "second";
+}
+
+
+
+
