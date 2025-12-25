@@ -1,0 +1,22 @@
+def fib(n) as do {
+
+    if n < 2 then do jump n;
+
+    jump fib(n - 1) + fib(n - 2); 
+}
+
+
+var before := clock();
+ioputfn fib(30);
+var after := clock();
+ioputfn after - before;
+
+
+
+
+
+
+
+
+
+
