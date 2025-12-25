@@ -45,6 +45,7 @@ class Resolver : public Visitor {
         super::object visitFunctionStmt(const Function& stmt) override;
         super::object visitIfStmt(const If& stmt) override;
         super::object visitPrintStmt(const Print& stmt) override;
+        super::object visitPrintlnStmt(const Println& stmt) override;
         super::object visitReturnStmt(const Return& stmt) override;
         super::object visitWhileStmt(const While& stmt) override;
 

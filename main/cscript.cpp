@@ -23,6 +23,9 @@
 #define CURSOR_JUMP_TOPLEFT "\033[H"
 
 
+std::vector<Stmt*> REPLkeepAlive;
+
+
 int main(int argc, char** argv) {
 
     cscript repl;
@@ -163,18 +166,32 @@ void cscript::run(std::string& source, bool repl) {
                     delete print;
                     print = nullptr;
 
+                    for (auto& statement : statements) {
+
+                        if (dynamic_cast<Function*>(statement))
+                            REPLkeepAlive.emplace_back(statement);
+
+                        else {
+
+                            delete statement;
+                            statement = nullptr;
+                        }
+                    }
+
                     return;
                 }
                 
             } catch (const Parser::ParseError&) {
 
             }
-        }
 
-        for (auto& statement : statements) {
+        } else {
 
-            delete statement;
-            statement = nullptr;
+            for (auto& statement : statements) {
+
+                delete statement;
+                statement = nullptr;
+            }
         }
 
         return;
@@ -188,11 +205,11 @@ void cscript::run(std::string& source, bool repl) {
 
     cscript::interpreter.interpret(statements, repl);
 
-    for (auto& statement : statements) {
-
-        delete statement;
-        statement = nullptr;
-    }
+    // for (auto& statement : statements) {
+    //
+    //     delete statement;
+    //     statement = nullptr;
+    // }
 
     return;
 }

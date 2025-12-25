@@ -94,6 +94,14 @@ super::object Resolver::visitPrintStmt(const Print& stmt) {
 }
 
 
+super::object Resolver::visitPrintlnStmt(const Println& stmt) {
+
+    this->resolve(stmt.expr.get());
+
+    return nullptr;
+}
+
+
 super::object Resolver::visitReturnStmt(const Return& stmt) {
 
     if (this->currentFunction == Resolver::FunctionType::NONE) {
