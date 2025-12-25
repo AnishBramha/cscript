@@ -15,7 +15,7 @@ class Resolver : public Visitor {
 
     private:
 
-        Interpreter interpreter;
+        Interpreter& interpreter;
         std::stack<std::unordered_map<std::string, bool>> scopes;
 
         enum class FunctionType {

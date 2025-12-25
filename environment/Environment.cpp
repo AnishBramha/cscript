@@ -91,7 +91,7 @@ void Environment::assign(const Token& name, super::object val) {
 
 void Environment::assignAt(int distance, const Token& name, super::object val) {
 
-    this->ancestor(distance)->values.emplace(std::make_pair(name.lexeme, val));
+    this->ancestor(distance)->values[name.lexeme] = val;
 
     return;
 }

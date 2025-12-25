@@ -37,7 +37,7 @@ super::object Resolver::visitVarStmt(const Var& stmt) {
 
 super::object Resolver::visitVariableExpr(const Variable& expr) {
 
-    if (!this->scopes.empty() && !this->scopes.top().find(expr.name.lexeme)->second) {
+    if (!this->scopes.empty() && this->scopes.top().find(expr.name.lexeme) != this->scopes.top().end() && !this->scopes.top().find(expr.name.lexeme)->second) {
 
         std::string errMessage = "CANNOT READ LOCAL VARIABLE TO ITS OWN INITIALISER";
         cscript::error(expr.name, errMessage);
@@ -206,17 +206,22 @@ void Resolver::resolveLocal(Expr* expr, const Token& name) {
 
     std::stack<std::unordered_map<std::string, bool>> temp;
 
-    for (size_t i = this->scopes.size() - 1; i >= 0; i--) {
+    if (!this->scopes.empty()) {
 
-        if (this->scopes.top().find(name.lexeme) != this->scopes.top().end()) {
+        int size = static_cast<int>(this->scopes.size());
 
-            this->interpreter.resolve(expr, static_cast<int>(this->scopes.size() - 1 - i));
-        
-            goto restore;
+        for (int i = size - 1; i >= 0; i--) {
+
+            if (this->scopes.top().find(name.lexeme) != this->scopes.top().end()) {
+
+                this->interpreter.resolve(expr, static_cast<int>(size) - 1 - i);
+            
+                goto restore;
+            }
+
+            temp.emplace(this->scopes.top());
+            this->scopes.pop();
         }
-
-        temp.emplace(this->scopes.top());
-        this->scopes.pop();
     }
 
     restore:
@@ -290,7 +295,7 @@ void Resolver::define(const Token& name) {
     if (this->scopes.empty())
         return;
 
-    this->scopes.top().emplace(std::make_pair(name.lexeme, true));
+    this->scopes.top()[name.lexeme] =  true;
 
     return;
 }

@@ -482,7 +482,7 @@ void Interpreter::execute(Stmt* stmt) {
 
 void Interpreter::resolve(Expr* expr, int depth) {
 
-    this->locals.emplace(std::make_pair(expr, depth));
+    this->locals[expr] = depth;
 
     return;
 }
