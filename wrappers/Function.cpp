@@ -8,9 +8,10 @@
 #include <vector>
 
 
-CallableFunction::CallableFunction(const Function* declaration, std::shared_ptr<Environment> closure)
+CallableFunction::CallableFunction(const Function* declaration, std::shared_ptr<Environment> closure, bool isInitialiser)
     : declaration(declaration),
-      closure(closure) {}
+      closure(closure),
+      isInitialiser(isInitialiser) {}
     
 
 super::object CallableFunction::call(Interpreter& interpreter, std::vector<super::object>& args) {
@@ -26,8 +27,14 @@ super::object CallableFunction::call(Interpreter& interpreter, std::vector<super
 
     } catch (const CallableFunction::Return& returnVal) {
 
+        if (this->isInitialiser)
+            return this->closure->getAt(0, "this");
+
         return returnVal.val;
     }
+
+    if (isInitialiser)
+        return this->closure->getAt(0, "this");
 
     return nullptr;
 }
@@ -45,16 +52,16 @@ std::string CallableFunction::to_string(void) const {
 };
 
 
-std::shared_ptr<CallableFunction> CallableFunction::bind(const Instance& instance) {
+std::shared_ptr<CallableFunction> CallableFunction::bind(std::shared_ptr<Instance> instance) {
 
     std::string lexeme = "this";
     super::object literal = nullptr;
     const Token _this(TokenType::THIS, lexeme, literal, -1);
 
     std::shared_ptr<Environment> environment = std::make_shared<Environment>(this->closure);
-    environment->define(_this, super::object(std::make_shared<Instance>(instance)));
+    environment->define(_this, super::object(instance));
 
-    return std::make_shared<CallableFunction>(declaration, environment);
+    return std::make_shared<CallableFunction>(declaration, environment, this->isInitialiser);
 }
 
 

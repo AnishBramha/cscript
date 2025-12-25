@@ -348,7 +348,7 @@ super::object Interpreter::visitExpressionStmt(const Expression& stmt) {
 
 super::object Interpreter::visitFunctionStmt(const Function& stmt) {
 
-    std::shared_ptr<Callable> function = std::make_shared<CallableFunction>(&stmt, this->environment);
+    std::shared_ptr<Callable> function = std::make_shared<CallableFunction>(&stmt, this->environment, false);
 
     environment->define(stmt.name, super::object(function));
 
@@ -462,7 +462,7 @@ super::object Interpreter::visitClassStmt(const Class& stmt) {
 
         const auto* function = dynamic_cast<Function*>(method.get());
 
-        methods.emplace(std::make_pair(function->name.lexeme, std::make_shared<CallableFunction>(function, this->environment)));
+        methods.emplace(std::make_pair(function->name.lexeme, std::make_shared<CallableFunction>(function, this->environment, function->name.lexeme == "init")));
     }
     
     std::shared_ptr<Callable> _class =  std::make_shared<CallableClass>(stmt.name.lexeme, methods);

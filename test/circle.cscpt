@@ -1,0 +1,25 @@
+class Circle as {
+
+    init(radius) as do {
+
+        this.radius := radius;
+    }
+
+    area() as do {
+
+        jump 3.14 * this.radius;
+    }
+}
+
+
+var circle := Circle(1);
+ioputfn circle.area();
+
+
+
+
+
+
+
+
+

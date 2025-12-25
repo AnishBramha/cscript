@@ -13,13 +13,22 @@ CallableClass::CallableClass(
 
 int CallableClass::arity(void) const {
 
-    return 0;
+    std::shared_ptr<CallableFunction> initialiser = this->findMethod("init");
+
+    if (!initialiser.get())
+        return 0;
+
+    return initialiser->arity();
 }
 
 
-super::object CallableClass::call(Interpreter&, std::vector<super::object>&) {
+super::object CallableClass::call(Interpreter& interpreter, std::vector<super::object>& args) {
 
     std::shared_ptr<Instance> instance = std::make_shared<Instance>(*this);
+    std::shared_ptr<CallableFunction> initialiser = this->findMethod("init");
+
+    if (initialiser.get())
+        initialiser->bind(instance)->call(interpreter, args);
 
     return super::object(instance);
 }

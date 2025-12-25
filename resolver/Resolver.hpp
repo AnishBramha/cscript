@@ -22,6 +22,7 @@ class Resolver : public Visitor {
 
             NONE,
             FUNCTION,
+            INITIALISER,
             METHOD
         };
 

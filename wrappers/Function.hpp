@@ -13,15 +13,17 @@ class CallableFunction : public Callable {
         const Function* declaration;
         std::shared_ptr<Environment> closure;
 
+        bool isInitialiser;
+
     public:
       
-        CallableFunction(const Function* declaration, std::shared_ptr<Environment> closure);
+        CallableFunction(const Function* declaration, std::shared_ptr<Environment> closure, bool isInitialiser);
 
         int arity(void) const override;
         super::object call(Interpreter& interpreter, std::vector<super::object>& args) override;
         std::string to_string(void) const override;
 
-        std::shared_ptr<CallableFunction> bind(const Instance& instance);
+        std::shared_ptr<CallableFunction> bind(std::shared_ptr<Instance> instance);
 
         ~CallableFunction() = default;
 

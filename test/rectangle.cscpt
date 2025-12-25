@@ -1,0 +1,21 @@
+class Rectangle as {
+
+    init(len, bre) as do {
+
+        this.len := len;
+        this.bre := bre;
+    }
+
+    printArea() as do { ioputfn this.len * this.bre; }
+
+    perimeter() as do { jump 2 * (this.len + this.bre); }
+}
+
+
+Rectangle(2,3).printArea();
+ioputfn Rectangle(2,3).perimeter();
+
+
+
+
+

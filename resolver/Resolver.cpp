@@ -110,8 +110,16 @@ super::object Resolver::visitReturnStmt(const Return& stmt) {
         cscript::error(stmt.keyword, errMessage);
     }
 
-    if (stmt.value.get())
+    if (stmt.value.get()) {
+
+        if (this->currentFunction == FunctionType::INITIALISER) {
+
+            std::string errMessage = "ILLEGAL VALUE JUMP FROM CONSTRUCTOR";
+            cscript::error(stmt.keyword, errMessage);
+        }
+
         this->resolve(stmt.value.get());
+    }
 
     return nullptr;
 }
@@ -131,6 +139,9 @@ super::object Resolver::visitClassStmt(const Class& stmt) {
     for (const std::unique_ptr<Stmt>& method : stmt.methods) {
 
         FunctionType declaration = FunctionType::METHOD;
+
+        if (dynamic_cast<Function*>(method.get())->name.lexeme == "init")
+            declaration = FunctionType::INITIALISER;
 
         this->resolveFunction(dynamic_cast<Function*>(method.get()), declaration);
     }

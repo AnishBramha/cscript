@@ -24,8 +24,11 @@ super::object Instance::get(const Token& name) const {
 
     std::shared_ptr<CallableFunction> method = this->_class.findMethod(name.lexeme);
 
-    if (method)
-        return super::object(method->bind(*this));
+    if (method) {
+
+        std::shared_ptr<Instance> self = std::const_pointer_cast<Instance>(this->shared_from_this());
+        return super::object(method->bind(self));
+    }
 
     throw Interpreter::RuntimeError(name, "UNDEFINED PROPERTY \'" + name.lexeme + "\'");
 }

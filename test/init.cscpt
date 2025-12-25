@@ -1,0 +1,15 @@
+class Foo as {
+
+    init() as do { ioputfn this; }
+}
+
+
+var foo := Foo();
+ioputfn foo.init();
+
+
+
+
+
+
+
