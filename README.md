@@ -2,7 +2,7 @@
 My implementation of Robert Nystrom's jlox interpreter, ported to C++.
 
 ## About
-cscript is a high-level, dynamic, interpreted and weakly-typed scripting language. Use the default file extension `.cscpt` (although any file type can theoretically be used).
+cscript is a high-level, dynamic, interpreted and weakly-typed object-oriented scripting language. Use the default file extension `.cscpt` (although any file type can theoretically be used).
 
 ## Usage
 
@@ -87,9 +87,17 @@ Expressions can be parenthesised and precedence works in the expected way, carri
 
 
 ---
-### Scope
+### Scope & Resolution
 
-A block of statements is enclosed in braces `{}`. Variables declared inside the block shadow the enclosing scope and their lifetime is limited to within the block.
+A block of statements is enclosed in braces `{}`. Variables declared inside the block shadow the enclosing scope and their lifetime is limited to within the block. However, if a local variable identifier conflicts with a variable in a higher scope, it throws an error during a static pass. This happens because the interpreter creates a new scope for a local variable as soon as it encounters `var`.
+
+The following is illegal:
+```cs
+var a := "global";
+{
+    var a := a; // cannot assign before initialistion
+}
+```
 
 
 ---
@@ -145,4 +153,130 @@ def fib(n) as do {
 Function calls can be made by using the identifier followed by `()`.
 ```c
 ioputfn fib(5);
+```
+
+Functions are first-class members. They can be passed as r-values to variables and called.
+
+```js
+def fun() as do { ioputfn "foo"; }
+def fn() as do { fun(); }
+
+var f := fn;
+f(); // prints 'foo'
+```
+
+---
+### Classes
+
+`cscript` supports object-oriented programming. It 'classes' an entity 'as' a collection of methods. Data members can be added dynamically on the go.
+
+```py
+class Foo as {
+
+    fun() as do { ...; }
+    foo() as do { ...; }
+}
+```
+
+Data members can also be initialised using a non-overloadable constructor with the keyword `init`. Class attributes can be referenced using `this`.
+
+```js
+class Foo as {
+
+    init(a,b) as do {
+
+        this.a := a; // initialised using
+        this.b := b; // the constructor
+        this.c := nil; // created on the go
+    }
+
+    fn() as do { ioputfn "test" + this.b; } // access a data member
+    fun() as do { this.fn(); } // call a method
+}
+```
+
+Objects of a class can be instantiated as a normal variable using `var`.
+
+```js
+var foo := Foo("p1", "p2");
+foo.fun(); // prints 'testp2'
+```
+
+All class methods are static, i.e., they do not require any explicit instance to run upon. They can be called by constructing an object on the fly. This creates a temporary instance in the scope which dies as soon as it executes.
+
+```js
+Foo("foo", "bar").fn(); // prints 'testfoo'
+```
+
+You can check the type of of an object, class or method by just printing it.
+
+```js
+ioputfn Foo; // <class Foo>
+ioputfn foo; // <instance <class Foo>>
+ioputfn foo.fun; // <fn fun>
+```
+
+You can also print `this` inside a class to obtain information about it.
+
+```cs
+class Bar as {
+
+    init() as do { ioputfn this; }
+}
+
+Bar(); // prints 'this'
+```
+
+---
+### Inheritance
+
+`cscript` has support for single inheritance. Use the `>` operator to denote the base class. All functions and variables of a base class are inherited by the subclass.
+
+```js
+class A as { // base
+
+    init(a) as do { this.a := a; }
+
+    foo() as do { ioputfn this.a; }
+    bar() as do { ioputfn "base"; }
+}
+
+class B > A as { // derived
+
+    init(a,b) as do {
+
+        super.init(a); // call base class constructor
+        this.b := b;
+    }
+
+    bar() as do { ioputfn "derived"; } // override base class method
+}
+
+var b := B(1,2);
+ioputfn b.a + " " + b.b; // prints '1 2' ; 'a' is inherited
+```
+
+All methods of a base class are virtual and will be overridden if possible in the derived class.
+
+```js
+b.foo(); // prints '1' ; inherited method
+A(nil).bar(); // prints 'base' ; base method
+b.bar(); // prints 'derived' ; overriden method
+```
+
+Base class methods can be called using `super`.
+
+```js
+class B > A as {
+
+        ...
+
+    bar() as do {
+
+        super.bar();
+        ioputfn "derived";
+    }
+}
+
+B(1,2).bar(); // prints 'base\nderived'
 ```

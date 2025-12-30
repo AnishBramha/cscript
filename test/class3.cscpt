@@ -1,0 +1,22 @@
+class Foo as {
+
+    init(a,b) as do {
+
+        this.a := a;
+        this.b := b;
+        this.c := nil;
+    }
+
+    fn() as do { ioputfn "test" + this.b; }
+    fun() as do { this.fn(); }
+}
+
+var foo := Foo("p1", "p2");
+foo.fun();
+
+Foo(1,2).fn();
+
+
+
+
+

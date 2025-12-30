@@ -1,0 +1,9 @@
+def fun() as do { ioputfn true; }
+def fn() as do { fun(); }
+
+
+var f := fn;
+f();
+
+
+

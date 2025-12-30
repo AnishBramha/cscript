@@ -1,0 +1,29 @@
+class A as { // base
+
+    init(a) as do { this.a := a; }
+
+    foo() as do { ioputfn this.a; }
+    bar() as do { ioputfn "base"; }
+}
+
+class B > A as { // derived
+
+    init(a,b) as do {
+
+        super.init(a); // call base class constructor
+        this.b := b;
+    }
+
+    bar() as do { super.bar(); ioputfn "derived"; } // override base class method
+}
+
+var b := B(1,2);
+ioputfn b.a + " " + b.b; // prints '1 2' ; 'a' is inherited
+
+
+b.foo(); // prints '1' ; inherited method
+A(nil).bar(); // prints 'base' ; base method
+b.bar(); // prints 'derived' ; overriden method
+
+
+

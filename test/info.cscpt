@@ -1,0 +1,11 @@
+class Foo as {
+
+    init() as do { ioputfn this; }
+}
+
+
+Foo();
+
+
+
+
