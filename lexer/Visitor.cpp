@@ -52,6 +52,11 @@ object Visitor::visitSetExpr(const Set&) {
 	return object();
 }
 
+object Visitor::visitSuperExpr(const Super&) {
+
+	return object();
+}
+
 object Visitor::visitThisExpr(const This&) {
 
 	return object();

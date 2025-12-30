@@ -22,7 +22,7 @@ object Binary::accept(Visitor& visitor) {
 }
 
 
-Call::Call(std::unique_ptr<Expr> callee, const Token& paren, vector<unique_ptr<Expr>>&& args) : callee(std::move(callee)), paren(paren), args(std::move(args)) {}
+Call::Call(std::unique_ptr<Expr> callee, const Token& paren, vector<unique_ptr<Expr>> args) : callee(std::move(callee)), paren(paren), args(std::move(args)) {}
 
 object Call::accept(Visitor& visitor) {
 
@@ -67,6 +67,14 @@ Set::Set(std::unique_ptr<Expr> obj, const Token& name, std::unique_ptr<Expr> val
 object Set::accept(Visitor& visitor) {
 
 	return visitor.visitSetExpr(*this);
+}
+
+
+Super::Super(const Token& keyword, const Token& method) : keyword(keyword), method(method) {}
+
+object Super::accept(Visitor& visitor) {
+
+	return visitor.visitSuperExpr(*this);
 }
 
 

@@ -133,6 +133,24 @@ super::object Resolver::visitClassStmt(const Class& stmt) {
     this->declare(stmt.name);
     this->define(stmt.name);
 
+    if (stmt.superclass.get() && stmt.name.lexeme == stmt.superclass->name.lexeme) {
+
+        std::string errMessage = "ILLEGAL SELF-INHERITANCE";
+        cscript::error(stmt.superclass->name, errMessage);
+    }
+
+    if (stmt.superclass.get()) {
+
+        this->currentClass = ClassType::SUBCLASS;
+        this->resolve(stmt.superclass.get());
+    }
+
+    if (stmt.superclass.get()) {
+
+        this->beginScope();
+        this->scopes.top().emplace("super", true);
+    }
+
     this->beginScope();
     this->scopes.top().emplace(std::make_pair("this", true));
 
@@ -147,6 +165,9 @@ super::object Resolver::visitClassStmt(const Class& stmt) {
     }
 
     this->endScope();
+
+    if (stmt.superclass.get())
+        this->endScope();
 
     this->currentClass = enclosingClass;
 
@@ -217,6 +238,24 @@ super::object Resolver::visitSetExpr(const Set& expr) {
 
     this->resolve(expr.val.get());
     this->resolve(expr.obj.get());
+
+    return nullptr;
+}
+
+super::object Resolver::visitSuperExpr(const Super& expr) {
+
+    if (this->currentClass == ClassType::NONE) {
+
+        std::string errMessage = "ILLEGAL USE OF \'super\' OUTSIDE A CLASS";
+        cscript::error(expr.keyword, errMessage);
+
+    } else if (this->currentClass != ClassType::SUBCLASS) {
+
+        std::string errMessage = "ILLEGAL USE OF \'super\' WITH NO BASE CLASS";
+        cscript::error(expr.keyword, errMessage);
+    }
+
+    this->resolveLocal(const_cast<Super*>(&expr), expr.keyword);
 
     return nullptr;
 }

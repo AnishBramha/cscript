@@ -1,0 +1,16 @@
+class Doughnut as {
+
+    cook() as do { ioputfn "Fry until golden brown."; }
+}
+
+
+class BostonCream > Doughnut as {}
+
+
+BostonCream().cook();
+
+
+
+
+
+

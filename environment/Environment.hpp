@@ -14,9 +14,9 @@ class Environment {
 
         std::unordered_map<std::string, super::object> values;
 
-        std::shared_ptr<Environment> enclosing;
-
     public:
+
+        std::shared_ptr<Environment> enclosing;
 
         Environment();
         Environment(std::shared_ptr<Environment> enclosing);

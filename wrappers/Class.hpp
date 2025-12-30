@@ -16,12 +16,14 @@ class CallableClass : public Callable {
     private:
 
         std::string name;
+        std::shared_ptr<Callable> superclass;
         std::unordered_map<std::string, std::shared_ptr<CallableFunction>> methods;
 
     public:
 
         CallableClass(
                 const std::string& name,
+                std::shared_ptr<Callable> superclass,
                 const std::unordered_map<std::string, std::shared_ptr<CallableFunction>>& methods);
 
         int arity(void) const override;

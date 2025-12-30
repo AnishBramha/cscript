@@ -329,6 +329,23 @@ super::object Interpreter::visitSetExpr(const Set& expr) {
 }
 
 
+super::object Interpreter::visitSuperExpr(const Super& expr) {
+
+    int distance = this->locals.find(const_cast<Super*>(&expr))->second;
+
+    std::shared_ptr<Callable> superclass = this->environment->getAt(distance, "super").as_callable();
+
+    std::shared_ptr<Instance> obj = this->environment->getAt(distance - 1, "this").as_instance();
+
+    std::shared_ptr<CallableFunction> method = dynamic_cast<CallableClass*>(superclass.get())->findMethod(expr.method.lexeme);
+
+    if (!method.get())
+        throw Interpreter::RuntimeError(expr.method, "UNDEFINED PROPERTY \'" + expr.method.lexeme + "\'");
+
+    return super::object(method->bind(obj));
+}
+
+
 super::object Interpreter::visitThisExpr(const This& expr) {
 
     return this->lookUpVariable(expr.keyword, expr);
@@ -454,7 +471,34 @@ super::object Interpreter::visitBlockStmt(const Block& stmt) {
 
 super::object Interpreter::visitClassStmt(const Class& stmt) {
 
+    super::object superclass = nullptr;
+    std::shared_ptr<Callable> _superclass = nullptr;
+
+    if (stmt.superclass.get()) {
+
+        superclass = this->evaluate(*stmt.superclass.get());
+
+        if (!superclass.is_callable()) {
+
+            std::string errMessage = "SUPERCLASS MUST BE A CLASS";
+            throw Interpreter::RuntimeError(stmt.superclass->name, errMessage);
+        }
+
+        _superclass = superclass.as_callable();
+    }
+
     this->environment->define(stmt.name, nullptr);
+
+    if (stmt.superclass.get()) {
+
+        this->environment = std::make_shared<Environment>(this->environment);
+
+        std::string _super = "super";
+        super::object literal = nullptr;
+        Token super(TokenType::SUPER, _super, literal, -1);
+
+        this->environment->define(super, _superclass);
+    }
 
     std::unordered_map<std::string, std::shared_ptr<CallableFunction>> methods;
 
@@ -465,7 +509,11 @@ super::object Interpreter::visitClassStmt(const Class& stmt) {
         methods.emplace(std::make_pair(function->name.lexeme, std::make_shared<CallableFunction>(function, this->environment, function->name.lexeme == "init")));
     }
     
-    std::shared_ptr<Callable> _class =  std::make_shared<CallableClass>(stmt.name.lexeme, methods);
+    std::shared_ptr<Callable> _class =  std::make_shared<CallableClass>(stmt.name.lexeme, _superclass, methods);
+
+    if (_superclass.get())
+        this->environment = this->environment->enclosing;
+
     this->environment->assign(stmt.name, super::object(_class));
 
     return nullptr;

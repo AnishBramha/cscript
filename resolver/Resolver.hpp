@@ -29,7 +29,8 @@ class Resolver : public Visitor {
         enum class ClassType {
 
             NONE,
-            CLASS
+            CLASS,
+            SUBCLASS
         };
 
         FunctionType currentFunction = FunctionType::NONE;
@@ -48,6 +49,7 @@ class Resolver : public Visitor {
         super::object visitLiteralExpr(const Literal& expr) override;
         super::object visitLogicalExpr(const Logical& expr) override;
         super::object visitSetExpr(const Set& expr) override;
+        super::object visitSuperExpr(const Super& expr) override;
         super::object visitThisExpr(const This& expr) override;
         super::object visitUnaryExpr(const Unary& expr) override;
 

@@ -1,0 +1,9 @@
+super.notInClass();
+
+class Foo as {
+
+    init() as do { super.foo(); }
+}
+
+
+

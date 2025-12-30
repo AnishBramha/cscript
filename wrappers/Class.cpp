@@ -7,8 +7,9 @@
 
 CallableClass::CallableClass(
         const std::string& name,
+        const std::shared_ptr<Callable> superclass,
         const std::unordered_map<std::string, std::shared_ptr<CallableFunction>>& methods)
-        : name(name), methods(methods) {}
+        : name(name), superclass(superclass), methods(methods) {}
 
 
 int CallableClass::arity(void) const {
@@ -46,6 +47,9 @@ std::shared_ptr<CallableFunction> CallableClass::findMethod(const std::string& n
 
     if (method != this->methods.end())
         return method->second;
+
+    if (this->superclass.get())
+        return dynamic_cast<CallableClass*>(this->superclass.get())->findMethod(name);
 
     return nullptr;
 }

@@ -25,7 +25,7 @@ class Block : public Stmt {
 
 		const vector<unique_ptr<Stmt>> statements;
 
-		Block(vector<unique_ptr<Stmt>>&& statements);
+		Block(vector<unique_ptr<Stmt>> statements);
 
 		object accept(Visitor& visitor) override;
 
@@ -37,9 +37,10 @@ class Class : public Stmt {
 	public:
 
 		const Token name;
+		const unique_ptr<Variable> superclass;
 		const vector<unique_ptr<Stmt>> methods;
 
-		Class(const Token& name, vector<unique_ptr<Stmt>>&& methods);
+		Class(const Token& name, unique_ptr<Variable> superclass, vector<unique_ptr<Stmt>> methods);
 
 		object accept(Visitor& visitor) override;
 
@@ -67,7 +68,7 @@ class Function : public Stmt {
 		const vector<Token> params;
 		const vector<unique_ptr<Stmt>> body;
 
-		Function(const Token& name, vector<Token>&& params, vector<unique_ptr<Stmt>>&& body);
+		Function(const Token& name, vector<Token>&& params, vector<unique_ptr<Stmt>> body);
 
 		object accept(Visitor& visitor) override;
 

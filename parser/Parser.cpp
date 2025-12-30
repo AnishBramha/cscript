@@ -251,6 +251,19 @@ Expr* Parser::unsafe_primary(void) { // free memory later
     if (this->match({TokenType::NUMBER, TokenType::STRING}))
         return new Literal(this->previous().literal);
 
+    if (this->match({TokenType::SUPER})) {
+
+        Token keyword = this->previous();
+
+        std::string errMessage = "EXPECTED \'.\' AFTER \'super\'";
+        this->consume(TokenType::DOT, errMessage);
+
+        errMessage = "EXPCTED SUPERCLASS NAME";
+        Token method = this->consume(TokenType::IDENTIFIER, errMessage);
+
+        return new Super(keyword, method);
+    }
+
     if (this->match({TokenType::THIS}))
         return new This(this->previous());
 
@@ -477,6 +490,16 @@ Stmt* Parser::unsafe_classDeclaration(void) {
     std::string errMessage = "EXPECTED CLASS NAME";
     Token name = this->consume(TokenType::IDENTIFIER, errMessage);
 
+    std::unique_ptr<Variable> superclass = nullptr;
+
+    if (this->match({TokenType::GREATER})) {
+
+        errMessage = "EXPECTED SUPERCLASS NAME";
+        this->consume(TokenType::IDENTIFIER, errMessage);
+
+        superclass = std::make_unique<Variable>(this->previous());
+    }
+
     errMessage = "EXPECTED \'AS\' CLASS HEADER TO BODY LINKER";
     this->consume(TokenType::AS, errMessage);
 
@@ -491,7 +514,7 @@ Stmt* Parser::unsafe_classDeclaration(void) {
     errMessage = "EXPECTED \'}\' AFTER CLASS BODY";
     this->consume(TokenType::RIGHT_BRACE, errMessage);
 
-    return new Class(name, std::move(methods));
+    return new Class(name, std::move(superclass), std::move(methods));
 }
 
 

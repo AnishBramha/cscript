@@ -28,6 +28,9 @@ def declareType(writer, baseName: str, className: str, fieldList: str, allBaseNa
         if type_name in allBaseNames and type_name != 'Block':
             paramList.append(f'std::unique_ptr<{type_name}> {name}')
 
+        elif 'unique_ptr' in type_name:
+                paramList.append(f'{type_name} {name}')
+
         elif 'vector' in type_name:
             paramList.append(f'{type_name}&& {name}')
 
@@ -58,6 +61,9 @@ def defineType(writer, baseName: str, className: str, fieldList: str, allBaseNam
         if type_name in allBaseNames and type_name != 'Block':
             paramList.append(f'std::unique_ptr<{type_name}> {name}')
 
+        elif 'unique_ptr' in type_name:
+            paramList.append(f'{type_name} {name}')
+
         elif 'vector' in type_name:
             paramList.append(f'{type_name}&& {name}')
 
@@ -73,7 +79,7 @@ def defineType(writer, baseName: str, className: str, fieldList: str, allBaseNam
 
         type_name, name = field.rsplit(' ', 1)
 
-        if type_name in allBaseNames or 'vector' in type_name:
+        if type_name in allBaseNames or 'vector' in type_name or 'unique_ptr' in type_name:
             initList.append(f'{name}(std::move({name}))')
 
         else:
@@ -227,6 +233,7 @@ if __name__ == '__main__':
         'Literal    : object value',
         'Logical    : Expr left, Token operatr, Expr right',
         'Set        : Expr obj, Token name, Expr val',
+        'Super      : Token keyword, Token method',
         'This       : Token keyword',
         'Unary      : Token oprtor, Expr right',
         'Variable   : Token name'
@@ -235,7 +242,7 @@ if __name__ == '__main__':
     stmtTypes = [
 
         'Block      : vector<unique_ptr<Stmt>> statements',
-        'Class      : Token name, vector<unique_ptr<Stmt>> methods',
+        'Class      : Token name, unique_ptr<Variable> superclass, vector<unique_ptr<Stmt>> methods',
         'Expression : Expr expr',
         'Function   : Token name, vector<Token> params, vector<unique_ptr<Stmt>> body',
         'If         : Expr condition, Stmt thenBranch, Stmt elseBranch',

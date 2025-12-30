@@ -42,6 +42,7 @@ class Interpreter : public Visitor {
         super::object visitLiteralExpr(const Literal& expr) override;
         super::object visitLogicalExpr(const Logical& expr) override;
         super::object visitSetExpr(const Set& expr) override;
+        super::object visitSuperExpr(const Super& expr) override;
         super::object visitThisExpr(const This& expr) override;
         super::object visitVariableExpr(const Variable& expr) override;
         super::object visitAssignExpr(const Assign& expr) override;

@@ -20,6 +20,7 @@ class Grouping;
 class Literal;
 class Logical;
 class Set;
+class Super;
 class This;
 class Unary;
 class Variable;
@@ -47,6 +48,7 @@ class Visitor {
 		virtual object visitLiteralExpr(const Literal&);
 		virtual object visitLogicalExpr(const Logical&);
 		virtual object visitSetExpr(const Set&);
+		virtual object visitSuperExpr(const Super&);
 		virtual object visitThisExpr(const This&);
 		virtual object visitUnaryExpr(const Unary&);
 		virtual object visitVariableExpr(const Variable&);

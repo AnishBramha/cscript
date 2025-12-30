@@ -126,7 +126,7 @@ std::shared_ptr<Callable> super::object::as_callable(void) const {
 
     } catch (const std::bad_variant_access&) {
 
-        std::cerr << "SUPER ERRPR: NOT CALLABLE" << std::endl;
+        std::cerr << "SUPER ERROR: NOT CALLABLE" << std::endl;
     }
 
     return nullptr;

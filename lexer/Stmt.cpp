@@ -6,7 +6,7 @@ using namespace std;
 using super::object;
 
 
-Block::Block(vector<unique_ptr<Stmt>>&& statements) : statements(std::move(statements)) {}
+Block::Block(vector<unique_ptr<Stmt>> statements) : statements(std::move(statements)) {}
 
 object Block::accept(Visitor& visitor) {
 
@@ -14,7 +14,7 @@ object Block::accept(Visitor& visitor) {
 }
 
 
-Class::Class(const Token& name, vector<unique_ptr<Stmt>>&& methods) : name(name), methods(std::move(methods)) {}
+Class::Class(const Token& name, unique_ptr<Variable> superclass, vector<unique_ptr<Stmt>> methods) : name(name), superclass(std::move(superclass)), methods(std::move(methods)) {}
 
 object Class::accept(Visitor& visitor) {
 
@@ -30,7 +30,7 @@ object Expression::accept(Visitor& visitor) {
 }
 
 
-Function::Function(const Token& name, vector<Token>&& params, vector<unique_ptr<Stmt>>&& body) : name(name), params(std::move(params)), body(std::move(body)) {}
+Function::Function(const Token& name, vector<Token>&& params, vector<unique_ptr<Stmt>> body) : name(name), params(std::move(params)), body(std::move(body)) {}
 
 object Function::accept(Visitor& visitor) {
 

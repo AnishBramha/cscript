@@ -55,7 +55,7 @@ class Call : public Expr {
 		const Token paren;
 		const vector<unique_ptr<Expr>> args;
 
-		Call(std::unique_ptr<Expr> callee, const Token& paren, vector<unique_ptr<Expr>>&& args);
+		Call(std::unique_ptr<Expr> callee, const Token& paren, vector<unique_ptr<Expr>> args);
 
 		object accept(Visitor& visitor) override;
 
@@ -126,6 +126,20 @@ class Set : public Expr {
 		const std::unique_ptr<Expr> val;
 
 		Set(std::unique_ptr<Expr> obj, const Token& name, std::unique_ptr<Expr> val);
+
+		object accept(Visitor& visitor) override;
+
+};
+
+
+class Super : public Expr {
+
+	public:
+
+		const Token keyword;
+		const Token method;
+
+		Super(const Token& keyword, const Token& method);
 
 		object accept(Visitor& visitor) override;
 
