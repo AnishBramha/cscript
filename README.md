@@ -2,7 +2,7 @@
 My implementation of Robert Nystrom's jlox interpreter, ported to C++.
 
 ## About
-cscript is a high-level, dynamic, interpreted and weakly-typed object-oriented scripting language. Use the default file extension `.cscpt` (although any file type can theoretically be used).
+`cscript` is a high-level, dynamic, interpreted and weakly-typed object-oriented scripting language. Use the default file extension `.cscpt` (although any file type can theoretically be used).
 
 ## Usage
 
@@ -15,7 +15,7 @@ To get started, clone this repository and run:
 - `make all` to get a build directory and the executable
 - `make clean` to remove the build directory
 - `make clear` to remove the build directory and the executable
-- `./cscpt.out` with no arguments to enter the REPL, or a cscript file (`.cscpt`) as an argument to run it
+- `./cscpt.out` with no arguments to enter the REPL, or a `cscript` file (`.cscpt`) as an argument to run it
 
 
 ## Language Features
@@ -26,7 +26,7 @@ To get started, clone this repository and run:
 ioputfn "Hello, World!"; // comment
 ```
 
-`ioputfn` is a native function that prints the parameters with a newline, built-in to cscript. It takes any primitive data type evaluating to an r-value as input. To print without a newline, use `ioputf`.
+`ioputfn` is a native function that prints the parameters with a newline, built-in to `cscript`. It takes any primitive data type evaluating to an r-value as input. To print without a newline, use `ioputf`.
 
 Statements are terminated with a semicolon.
 
@@ -34,7 +34,7 @@ Statements are terminated with a semicolon.
 ---
 ### Variables & Data Types
 
-Cscript is dynamic and weakly-typed, i.e., type checking is done at runtime. There are three internally defined data types derived from C++: `double`, `bool` (with values `true` and `false`) and `string` (enclosed in `"..."`) and two fallback values for a variable: `nil` and `uninitialised_t`.
+`Cscript` is dynamic and weakly-typed, i.e., type checking is done at runtime. There are three internally defined data types derived from C++: `double`, `bool` (with values `true` and `false`) and `string` (enclosed in `"..."`) and two fallback values for a variable: `nil` and `uninitialised_t`.
 
 Use the `var` keyword to declare a variable. Use the assignment operator `:=` to initialise. Trying to access an unitialised variable will cause a runtime error.
 
@@ -108,7 +108,7 @@ var a := "global";
 ```hs
 if x < y then do ioputfn x;
 
-else {
+else do {
     
     if x = y then do ioputfn y;
 
@@ -224,7 +224,7 @@ class Bar as {
     init() as do { ioputfn this; }
 }
 
-Bar(); // prints 'this'
+Bar(); // prints '<instance <class Bar>>'
 ```
 
 ---
