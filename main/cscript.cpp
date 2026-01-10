@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
 
     if (argc > 2) {
 
-        std::cerr << "USAGE: CSCRIPT" << std::endl;
+        std::cerr << "Usage: cscpt [script]?" << std::endl;
         std::exit(EX_USAGE);
 
     } else if (argc == 2) {
