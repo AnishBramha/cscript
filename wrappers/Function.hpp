@@ -32,7 +32,6 @@ class CallableFunction : public Callable {
 
             private:
 
-
             public:
 
                 super::object val;
@@ -42,10 +41,6 @@ class CallableFunction : public Callable {
                 ~Return() = default;
         };
 };
-
-
-
-
 
 
 

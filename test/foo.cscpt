@@ -1,2 +1,11 @@
+def fun(a,b,c) as do {
+
+    ioputfn "Result: " + a + b + c;
+}
+
+fun(-1.8, "foo" , "");
+
+
+
 
 

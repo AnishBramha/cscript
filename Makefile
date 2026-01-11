@@ -1,13 +1,12 @@
 CXX = clang++
 
 CXXFLAGS = -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -fsanitize=address,undefined -g -MMD -MP -O3 -ffast-math -march=native -mtune=native -flto
-
 LDFLAGS = -fsanitize=address,undefined -g -flto
 
 TARGET = cscpt.out
 BUILD_DIR = build
 
-SRCS = $(shell find . -name "*.cpp")
+SRCS = $(filter-out ./lexer/AstPrinter.cpp,$(shell find . -name "*.cpp"))
 OBJS = $(patsubst ./%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
 DEPS = $(patsubst ./%.cpp,$(BUILD_DIR)/%.d,$(SRCS))
 
@@ -29,7 +28,7 @@ all: $(TARGET)
 
 $(TARGET): $(OBJS)
 	@echo "\n$(BOLD)$(GREEN)Compilation finished ✓$(RESET)"
-	@echo "\n$(BOLD)$(CYAN)Linking ⧗$(RESET)"
+	@echo "\n$(BOLD)$(CYAN)Linking ↺$(RESET)"
 	@if ! $(CXX) $(LDFLAGS) -o $@ $^ > /dev/null ; then \
 		echo "\n$(BOLD)$(RED)Linking failed ✘$(RESET)\n"; \
 		exit 1;\
@@ -50,11 +49,11 @@ $(BUILD_DIR)/%.o: ./%.cpp
 
 
 clean:
-	@echo "Cleaning build directory..."
+	@echo "Cleaning build directory 🗑️"
 	rm -rf $(BUILD_DIR)
 
 clear:
-	@echo "Clearing project directory..."
+	@echo "Clearing project directory 🗑️"
 	rm -rf $(BUILD_DIR) $(TARGET)
 
 -include $(DEPS)

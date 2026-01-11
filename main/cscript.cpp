@@ -4,8 +4,10 @@
 #include "../resolver/Resolver.hpp"
 #include "../tokeniser/Token.hpp"
 #include "../scanner/Scanner.hpp"
+#include <cstddef>
 #include <cstdlib>
 #include <exception>
+#include <ios>
 #include <iostream>
 #include <memory>
 #include <ostream>

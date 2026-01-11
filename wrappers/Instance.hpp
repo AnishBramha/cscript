@@ -12,7 +12,6 @@ class Instance : public std::enable_shared_from_this<Instance> {
 
         CallableClass _class;
         std::unordered_map<std::string, super::object> fields;
-
     
     public:
 

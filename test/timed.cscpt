@@ -7,7 +7,7 @@ def fib(n) as do {
 
 
 var before := clock();
-ioputfn fib(30);
+ioputfn fib(28);
 var after := clock();
 ioputfn after - before;
 

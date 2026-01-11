@@ -1,5 +1,5 @@
 # `cscript`
-My implementation of Robert Nystrom's jlox interpreter, ported to C++.
+My implementation of [Robert Nystrom's](https://stuffwithstuff.com/) [jlox](https://craftinginterpreters.com/) interpreter, ported to C++.
 
 ## About
 `cscript` is a high-level, dynamic, interpreted and weakly-typed object-oriented scripting language. Use the default file extension `.cscpt` (although any file type can theoretically be used).

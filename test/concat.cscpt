@@ -1,0 +1,17 @@
+var x := "abc";
+var y := 12;
+var z := x + y;
+
+ioputfn z;
+
+var a := "1" + 2;
+var b := 3 + "4";
+var c := a + b;
+
+ioputfn c;
+
+
+
+
+
+

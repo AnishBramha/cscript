@@ -3,6 +3,7 @@
 *.d
 *.out
 build
+.vscode
 
 
 

@@ -1,0 +1,10 @@
+def scope(a) as do {
+    
+    var a := nil;
+    jump a;
+}
+
+ioputfn scope(true);
+
+
+

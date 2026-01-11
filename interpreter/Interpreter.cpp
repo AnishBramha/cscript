@@ -31,8 +31,6 @@ namespace {
 
         private:
 
-
-
         public:
 
             int arity(void) const override {

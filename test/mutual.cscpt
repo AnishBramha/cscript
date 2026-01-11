@@ -1,0 +1,17 @@
+def isOdd(n) as do {
+
+    if (n = 0) then do jump false;
+    jump isEven(n - 1);
+}
+
+def isEven(n) as do {
+
+    if (n = 0) then do jump true;
+    jump isOdd(n - 1);
+}
+
+var v := 5;
+ioputfn isEven(v);
+
+
+
