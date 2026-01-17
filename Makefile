@@ -1,6 +1,7 @@
 CXX = clang++
 
 CXXFLAGS = -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -fsanitize=address,undefined -g -MMD -MP -O3 -ffast-math -march=native -mtune=native -flto
+
 LDFLAGS = -fsanitize=address,undefined -g -flto
 
 TARGET = cscpt.out

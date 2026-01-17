@@ -1,0 +1,4 @@
+// precendece maintained for power
+
+ioputfn "" + nil + 2 ^ 3;
+
