@@ -54,9 +54,10 @@ arguments      => expression ( ',' expression )*;
 =================
 NUMBER         => DIGIT+ ('.' DIGIT+)?;
 STRING         => '"' <any char except '"'>* '"';
-IDENTIFIER     => LETTER ( LETTER | DIGIT )*;
-LETTER         => 'a'..'z' | 'A'..'Z' | '_';
+IDENTIFIER     => CHAR ( CHAR | DIGIT )*;
+CHAR         => 'a'..'z' | 'A'..'Z' | '_';
 DIGIT          => '0'..'9';
+
 
 
 
